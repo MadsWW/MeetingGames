@@ -11,29 +11,10 @@ public class DeckBuilder : MonoBehaviour {
     List<Sprite> _sprites = new List<Sprite>();
     List<int> recurredNumbers = new List<int>();
 
-    public int rows;
-    public int cols;
-
-    private int amountOfSets;
-
     public float size = 1.5f;
 
 
-    private void Start()
-    {
-        CalcAmountOfSets();
-        GetSpriteSets();
-        PlaceCards();
-    }
-
-    //Calculates amount of sets needed depending on amount of rows/cols.
-    private void CalcAmountOfSets()
-    {
-        //If the there is no round number send message to adjust rows/cols
-        amountOfSets = (rows * cols) / 2;
-    }
-
-    private void GetSpriteSets()
+    public void GetSpriteSets(int amountOfSets)
     {
         NonRecurringRandomNumbers(amountOfSets, _spriteCollection.Length);
 
@@ -48,7 +29,7 @@ public class DeckBuilder : MonoBehaviour {
     }
 
     //Places card on position depending on amount of rows/cols.
-    private void PlaceCards()
+    public void PlaceCards(int rows, int cols)
     {
         float xpos = 0;
         float ypos = 0;
@@ -58,7 +39,6 @@ public class DeckBuilder : MonoBehaviour {
 
         for(int x = 0; x < rows; x++)
         {
-            
             for (int y = 0; y < cols; y++)
             {
                 BuildCard(xpos, ypos, cardNumber);
@@ -83,7 +63,8 @@ public class DeckBuilder : MonoBehaviour {
     }
 
 
-    //!! Maybe assign value between 0/1 to all indexy of original lost and them sort them for randomness.
+    //!! Maybe assign value between 0/1 to all indexy of original list and them sort them for randomness.
+    //!! For a large List this will take longer and longer.
     private void NonRecurringRandomNumbers(int amountRandomNr, int highestNumber) // return list of int to avoid emptying class variable list.
     {
         int randomNumber;

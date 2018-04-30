@@ -12,8 +12,8 @@ public class CardBehaviour : MonoBehaviour {
 
     public SpriteRenderer spriteRen;
 
-    private Quaternion normalRotation = new Quaternion(0, 0, 0, 0);
-    private Quaternion flippedRotation = new Quaternion(0, 180, 0, 0);
+    private Quaternion faceUpPosition = new Quaternion(0, 0, 0, 0);
+    private Quaternion faceDownPosition = new Quaternion(0, 180, 0, 0);
 
     private bool canSelectThisCard = true;
 
@@ -23,12 +23,12 @@ public class CardBehaviour : MonoBehaviour {
         ResetPosition();
     }
 
-    //Flips card to normal around when clicked.
+    //Flips card to faceup position when clicked.
     private void OnMouseDown()
     {
         if (SetSelectedCard())
         {
-            gameObject.transform.rotation = normalRotation;
+            gameObject.transform.rotation = faceUpPosition;
         }
     }
 
@@ -71,7 +71,7 @@ public class CardBehaviour : MonoBehaviour {
     //Puts cards back into play.
     public void ResetPosition()
     {
-        gameObject.transform.rotation = flippedRotation;
+        gameObject.transform.rotation = faceDownPosition;
         canSelectThisCard = true;
     }
 
