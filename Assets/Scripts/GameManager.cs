@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,35 +9,43 @@ public class GameManager : MonoBehaviour {
 
     public event ChangeSetsTextDelegate ChangeSetsTextEvent;
 
+    public enum GameMode { Relax, Turns, Time, Endless}
+
+    public GameMode gameMode;
+
     private int rows;
     private int cols;
     private int amountOfSets;
     private int correctSets;
 
+    private int turnLeft = 20;
+    private int timeLeft = 100;
+
+
+    //Dont Destroy Object.
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
     }
 
-    //Add to CheckCard Event
+    //Add to events
     private void OnEnable ()
     {
-        CardBehaviour.CheckCard += CheckCorrectCall;
-        SceneManager.sceneLoaded += LoadedScene;
         LevelSizeButton.BoardSize += SetupGame;
+        SceneManager.sceneLoaded += LoadedScene;
+        CardBehaviour.CheckCard += CheckCorrectCall;
 	}
 
-    //Remove from CheckCard event
+    //Remove from events
     private void OnDisable()
     {
-        CardBehaviour.CheckCard -= CheckCorrectCall;
-        SceneManager.sceneLoaded -= LoadedScene;
         LevelSizeButton.BoardSize -= SetupGame;
+        SceneManager.sceneLoaded -= LoadedScene;
+        CardBehaviour.CheckCard -= CheckCorrectCall;
     }
 
-
     //Sets rows/cols depending on menu button input.
-    public void SetupGame(object sender, SetBoardSizeEventArgs args)
+    private void SetupGame(object sender, SetBoardSizeEventArgs args)
     {
         correctSets = 0;
         rows = args.BoardHeight;
@@ -53,7 +62,10 @@ public class GameManager : MonoBehaviour {
     //Passes amount of rows/cols/sets to DeckBuilder when the memory scene is loaded.
     private void LoadedScene(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "Memory" && FindObjectOfType<DeckBuilder>())
+        bool correctScene = scene.name == "Memory";
+        bool scriptAvailable = FindObjectOfType<DeckBuilder>();
+
+        if (correctScene && scriptAvailable)
         {
             DeckBuilder buildDeck = FindObjectOfType<DeckBuilder>();
 
@@ -62,12 +74,19 @@ public class GameManager : MonoBehaviour {
 
             SetSetsText();
         }
+
+        switch (gameMode)
+        {
+            case GameMode.Time:
+                InvokeRepeating("TimeGameMode", 1f, 1f);
+                break;
+            case GameMode.Endless:
+                InvokeRepeating("EndlessGameMode", 1f, 1f);
+                break;
+            default:
+                throw new InvalidEnumArgumentException("A non existing game mode has been chosen");
+        }
     }
-
-
-
-
-#region CHECKCORRECTANSWER_METHODS
 
     //Check if the two selectedCards are equal to eachother and resets the selected cards afterwards.
     private void CheckCorrectCall(object sender, CheckCardEventArgs e)
@@ -78,14 +97,12 @@ public class GameManager : MonoBehaviour {
         {
             ResetSelectedCards();
             CheckForWin();
-            print("Correct");
         }
         else
         {
             CardBehaviour.selectOne.ResetPosition();
             CardBehaviour.selectTwo.ResetPosition();
             ResetSelectedCards();
-            print("Incorrect");
         }
     }
 
@@ -96,8 +113,8 @@ public class GameManager : MonoBehaviour {
         CardBehaviour.selectOne = null;
         CardBehaviour.selectTwo = null;
     }
-#endregion CHECKCORRCTANSWER_METHODS
 
+    //Checks if all sets have been completed
     private void CheckForWin()
     {
         correctSets++;
@@ -111,6 +128,7 @@ public class GameManager : MonoBehaviour {
 
     }
 
+    //Sends event with text from amount of sets completed.
     private void SetSetsText()
     {
         ChangeSetsTextEventArgs args = new ChangeSetsTextEventArgs();
@@ -119,4 +137,53 @@ public class GameManager : MonoBehaviour {
         ChangeSetsTextEvent(gameObject, args);
     }
 
+
+    private void DetermineGameMode()
+    {
+        switch (gameMode)
+        {
+            case GameMode.Relax:
+                break;
+            case GameMode.Turns:
+                break;
+            case GameMode.Time:
+                break;
+            case GameMode.Endless:
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void RelaxGameMode()
+    {
+
+    }
+
+    private void TurnGameMode()
+    {
+
+    }
+
+    private void TimeGameMode()
+    {
+        timeLeft--;
+
+        if(timeLeft <= 0)
+        {
+            //LoseCondition
+            CancelInvoke("TimeGameMode");
+        }
+    }
+
+    private void EndlessGameMode()
+    {
+        timeLeft--;
+
+        if (timeLeft <= 0)
+        {
+            //LoseCondition
+            CancelInvoke("EndlessGameMode");
+        }
+    }
 }
