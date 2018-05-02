@@ -17,3 +17,13 @@ public class ChangeSetsTextEventArgs : EventArgs
     public string CurrentSets { get; set; }
     public string AmountOfSets { get; set; }
 }
+
+public class ChangeTurnTextEventArgs : EventArgs
+{
+    public string TurnLeft { get; set; }
+}
+
+public class ChangeTimeTextEventArgs : EventArgs
+{
+    public string TimeLeft { get; set; }
+}

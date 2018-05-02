@@ -7,15 +7,23 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
-    public event ChangeSetsTextDelegate ChangeSetsTextEvent;
+    //!! Rework To Do - Check Line: 31, 82
+    //!! 31: Make gamemanager into singleton.
+    //!! 82: When Certain Game Mode set time/turn to -- instead of 0.
+    //!! ResetBoard for Endles game mode
+    //!! For Endless game mode add time when correct answer/ remove time for bad answer.
 
-    public enum GameMode { Relax, Turns, Time, Endless}
 
+    public event ChangeSetsTextDelegate ChangeSetsLeft;
+    public event ChangeTurnTextDelegate ChangeTurnLeft;
+    public event ChangeTimeTextDelegate ChangeTimeLeft;
+
+    public enum GameMode { Relax, Turns, Time, Endless }
     public GameMode gameMode;
 
-    private int rows;
-    private int cols;
-    private int amountOfSets;
+    private int rows = 6;
+    private int cols = 4;
+    private int amountOfSets = 12;
     private int correctSets;
 
     private int turnLeft = 20;
@@ -26,6 +34,12 @@ public class GameManager : MonoBehaviour {
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
+    }
+
+    //Sets the GameMode from menu button - OnClick() does not support enum/thats why its integer.
+    public void SetGameMode(int mode)
+    {
+        gameMode = (GameMode)mode;
     }
 
     //Add to events
@@ -73,30 +87,45 @@ public class GameManager : MonoBehaviour {
             buildDeck.PlaceCards(rows, cols);
 
             SetSetsText();
-        }
+            SetTurnText(0);
+            SetTimeText(0);
 
-        switch (gameMode)
-        {
-            case GameMode.Time:
-                InvokeRepeating("TimeGameMode", 1f, 1f);
-                break;
-            case GameMode.Endless:
-                InvokeRepeating("EndlessGameMode", 1f, 1f);
-                break;
-            default:
-                throw new InvalidEnumArgumentException("A non existing game mode has been chosen");
+            switch (gameMode)
+            {
+                case GameMode.Turns:
+                    //Set turns for this game mode.
+                    SetTurnText(turnLeft);
+                    break;
+                case GameMode.Time:
+                    //Set Time for this game mode
+                    SetTimeText(timeLeft);
+                    InvokeRepeating("CheckTimeLeft", 1f, 1f);
+                    break;
+                case GameMode.Endless:
+                    //Set Time for this game mode
+                    SetTimeText(timeLeft);
+                    InvokeRepeating("CheckTimeLeft", 1f, 1f);
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException("A non existing game mode has been chosen");
+            }
         }
     }
 
     //Check if the two selectedCards are equal to eachother and resets the selected cards afterwards.
     private void CheckCorrectCall(object sender, CheckCardEventArgs e)
     {
-        bool sameCards = e.CardOne.spriteRen.sprite == e.CardTwo.spriteRen.sprite;
+        if (gameMode == GameMode.Turns)
+        {
+            CheckTurnLeft();
+        }
+        
 
+        bool sameCards = e.CardOne.spriteRen.sprite == e.CardTwo.spriteRen.sprite;
         if (sameCards)
         {
             ResetSelectedCards();
-            CheckForWin();
+            CheckSetsLeft();
         }
         else
         {
@@ -114,19 +143,7 @@ public class GameManager : MonoBehaviour {
         CardBehaviour.selectTwo = null;
     }
 
-    //Checks if all sets have been completed
-    private void CheckForWin()
-    {
-        correctSets++;
-        SetSetsText();
 
-        if(correctSets >= amountOfSets)
-        {
-            //Return to Menu or Reset and Go again
-            //
-        }
-
-    }
 
     //Sends event with text from amount of sets completed.
     private void SetSetsText()
@@ -134,56 +151,69 @@ public class GameManager : MonoBehaviour {
         ChangeSetsTextEventArgs args = new ChangeSetsTextEventArgs();
         args.CurrentSets = correctSets.ToString();
         args.AmountOfSets = amountOfSets.ToString();
-        ChangeSetsTextEvent(gameObject, args);
+        ChangeSetsLeft(gameObject, args);
     }
 
-
-    private void DetermineGameMode()
+    //Sends event with amount of turns left.
+    private void SetTurnText(int turn)
     {
-        switch (gameMode)
+        ChangeTurnTextEventArgs args = new ChangeTurnTextEventArgs();
+        args.TurnLeft = turn.ToString();
+        ChangeTurnLeft(gameObject, args);
+    }
+
+    //Sends event with amount of time left.
+    private void SetTimeText(int time)
+    {
+        ChangeTimeTextEventArgs args = new ChangeTimeTextEventArgs();
+        args.TimeLeft = time.ToString();
+        ChangeTimeLeft(gameObject, args);
+    }
+
+    //Checks if all sets have been completed and passes that to event.
+    private void CheckSetsLeft()
+    {
+        correctSets++;
+        SetSetsText();
+
+        if (correctSets >= amountOfSets)
         {
-            case GameMode.Relax:
-                break;
-            case GameMode.Turns:
-                break;
-            case GameMode.Time:
-                break;
-            case GameMode.Endless:
-                break;
-            default:
-                break;
+            WinCondition();
         }
     }
 
-    private void RelaxGameMode()
+    //Checks how much turns are left and passes that to event.
+    private void CheckTurnLeft()
     {
+        turnLeft--;
+        SetTurnText(turnLeft);
 
-    }
-
-    private void TurnGameMode()
-    {
-
-    }
-
-    private void TimeGameMode()
-    {
-        timeLeft--;
-
-        if(timeLeft <= 0)
+        if(turnLeft <= 0)
         {
-            //LoseCondition
-            CancelInvoke("TimeGameMode");
+            LoseCondition();
         }
     }
 
-    private void EndlessGameMode()
+    //Checks how much time is left and passes that to event.
+    private void CheckTimeLeft()
     {
         timeLeft--;
+        SetTimeText(timeLeft);
 
         if (timeLeft <= 0)
         {
-            //LoseCondition
-            CancelInvoke("EndlessGameMode");
+            CancelInvoke("CheckTimeLeft");
+            LoseCondition();
         }
+    }
+
+    private void WinCondition()
+    {
+        //Whatever happens the player wins the round.
+    }
+
+    private void LoseCondition()
+    {
+        //Whatever happens when the player loses the round.
     }
 }

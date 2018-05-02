@@ -52,3 +52,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SetsText: {fileID: 0}
+  TurnText: {fileID: 0}
+  TimeText: {fileID: 0}
