@@ -10,6 +10,7 @@ public class DeckBuilder : MonoBehaviour {
 
     List<Sprite> _sprites = new List<Sprite>();
     List<int> recurredNumbers = new List<int>();
+    List<GameObject> _cards = new List<GameObject>();
 
     public float size = 1.5f;
 
@@ -60,6 +61,15 @@ public class DeckBuilder : MonoBehaviour {
         int spriteNumber = recurredNumbers[cardNumber];
         Sprite sprite = _sprites[spriteNumber];
         cardinfo.SetCardInfo(sprite);
+        _cards.Add(card);
+    }
+
+    public void ClearBoard()
+    {
+        foreach(GameObject go in _cards)
+        {
+            Destroy(go);
+        }
     }
 
 

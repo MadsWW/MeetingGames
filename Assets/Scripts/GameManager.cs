@@ -9,9 +9,7 @@ public class GameManager : MonoBehaviour {
 
     //!! Rework To Do - Check Line: 31, 82
     //!! 31: Make gamemanager into singleton.
-    //!! 82: When Certain Game Mode set time/turn to -- instead of 0.
-    //!! ResetBoard for Endles game mode
-    //!! For Endless game mode add time when correct answer/ remove time for bad answer.
+    //!! Add method for endless gamemode to add less then the more rounds the player won.
 
 
     public event ChangeSetsTextDelegate ChangeSetsLeft;
@@ -28,6 +26,8 @@ public class GameManager : MonoBehaviour {
 
     private int turnLeft = 20;
     private int timeLeft = 100;
+
+    DeckBuilder buildDeck;
 
 
     //Dont Destroy Object.
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour {
 
         if (correctScene && scriptAvailable)
         {
-            DeckBuilder buildDeck = FindObjectOfType<DeckBuilder>();
+            buildDeck = FindObjectOfType<DeckBuilder>();
 
             buildDeck.GetSpriteSets(amountOfSets);
             buildDeck.PlaceCards(rows, cols);
@@ -178,7 +178,14 @@ public class GameManager : MonoBehaviour {
 
         if (correctSets >= amountOfSets)
         {
-            WinCondition();
+            if(gameMode == GameMode.Endless)
+            {
+                ResetBoard();
+            }
+            else
+            {
+                WinCondition();
+            }
         }
     }
 
@@ -205,6 +212,16 @@ public class GameManager : MonoBehaviour {
             CancelInvoke("CheckTimeLeft");
             LoseCondition();
         }
+    }
+
+    private void ResetBoard()
+    {
+        correctSets = 0;
+        SetSetsText();
+        timeLeft += 30;
+        buildDeck.ClearBoard();
+        buildDeck.GetSpriteSets(amountOfSets);
+        buildDeck.PlaceCards(rows, cols);
     }
 
     private void WinCondition()
