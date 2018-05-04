@@ -27,3 +27,9 @@ public class ChangeTimeTextEventArgs : EventArgs
 {
     public string TimeLeft { get; set; }
 }
+
+public class UnlockAchievementEventArgs : EventArgs
+{
+    public AchievementType AchieveType { get; set; }
+    public int Amount { get; set; }
+}

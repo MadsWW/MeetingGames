@@ -222,6 +222,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Achievement.cs" />
+    <Compile Include="Assets\Scripts\AchievementTracker.cs" />
     <Compile Include="Assets\Scripts\CardBehaviour.cs" />
     <Compile Include="Assets\Scripts\CheckCardDelegate.cs" />
     <Compile Include="Assets\Scripts\CheckCardEventArgs.cs" />
