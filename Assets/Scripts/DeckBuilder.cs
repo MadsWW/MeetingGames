@@ -68,14 +68,14 @@ public class DeckBuilder : MonoBehaviour {
     {
         foreach(GameObject go in _cards)
         {
-            Destroy(go);
+            Destroy(go); // Instead of destroying replace the picture of them cards instead.
         }
     }
 
 
     //!! Maybe assign value between 0/1 to all indexy of original list and them sort them for randomness.
     //!! For a large List this will take longer and longer.
-    private void NonRecurringRandomNumbers(int amountRandomNr, int highestNumber) // return list of int to avoid emptying class variable list.
+    private void NonRecurringRandomNumbers(int amountRandomNr, int highestNumber) // return list of int to avoid emptying class variable list and can be made sep. class
     {
         int randomNumber;
 

@@ -5,41 +5,67 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum GameMode { Relax, Turns, Time, Endless }
+
 public class GameManager : MonoBehaviour {
 
-    //!! Rework To Do - Check Line: 31, 82
+    //!! Rework To Do - Check Line: 31,232,176, 236
+    //!! 176: All CheckTurn/Time/Sets Method could be one separate function with 2 int or float params saves space.
     //!! 31: Make gamemanager into singleton.
-    //!! Add method for endless gamemode to add less then the more rounds the player won.
+    //!! 232: Place resetboard in DeckBuilder Class
+    //!! 236: Add method for endless gamemode to add less then the more rounds the player won.
 
 
     public event ChangeSetsTextDelegate ChangeSetsLeft;
     public event ChangeTurnTextDelegate ChangeTurnLeft;
     public event ChangeTimeTextDelegate ChangeTimeLeft;
 
-    public enum GameMode { Relax, Turns, Time, Endless }
+    //Can be private
+ 
     public GameMode gameMode;
 
-    private int rows = 6;
-    private int cols = 4;
-    private int amountOfSets = 12;
+    private static GameManager gManager = null;
+
+    //Will be set from menu buttons if necessairy
+    private int rows = 2;
+    private int cols = 1;
+    private int amountOfSets = 1;
     private int correctSets;
 
     private int turnLeft = 20;
     private int timeLeft = 100;
 
     DeckBuilder buildDeck;
+    AchievementTracker aTracker;
+    LevelManager lManager;
 
 
     //Dont Destroy Object.
     private void Awake()
     {
+    
+
+
+        if (gManager == null)
+        {
+            gManager = this;
+        }
+        else
+        {
+            print("got destroyed");
+            Destroy(gameObject);
+        }
+
         DontDestroyOnLoad(gameObject);
+        aTracker = FindObjectOfType<AchievementTracker>();
+        lManager = FindObjectOfType<LevelManager>();
+
     }
 
     //Sets the GameMode from menu button - OnClick() does not support enum/thats why its integer.
-    public void SetGameMode(int mode)
+    public void SetGameMode(GameMode mode)
     {
-        gameMode = (GameMode)mode;
+        gameMode = mode;
     }
 
     //Add to events
@@ -76,7 +102,7 @@ public class GameManager : MonoBehaviour {
     //Passes amount of rows/cols/sets to DeckBuilder when the memory scene is loaded.
     private void LoadedScene(Scene scene, LoadSceneMode mode)
     {
-        bool correctScene = scene.name == "Memory";
+        bool correctScene = scene.name == "Memory"; //Replace with public scene variable.
         bool scriptAvailable = FindObjectOfType<DeckBuilder>();
 
         if (correctScene && scriptAvailable)
@@ -86,28 +112,31 @@ public class GameManager : MonoBehaviour {
             buildDeck.GetSpriteSets(amountOfSets);
             buildDeck.PlaceCards(rows, cols);
 
+            correctSets = 0;
             SetSetsText();
             SetTurnText(0);
             SetTimeText(0);
 
             switch (gameMode)
             {
+                case GameMode.Relax:
+                    break;
                 case GameMode.Turns:
-                    //Set turns for this game mode.
+                    turnLeft = 20;
                     SetTurnText(turnLeft);
                     break;
                 case GameMode.Time:
-                    //Set Time for this game mode
+                    timeLeft = 100;
                     SetTimeText(timeLeft);
                     InvokeRepeating("CheckTimeLeft", 1f, 1f);
                     break;
                 case GameMode.Endless:
-                    //Set Time for this game mode
+                    timeLeft = 100;
                     SetTimeText(timeLeft);
                     InvokeRepeating("CheckTimeLeft", 1f, 1f);
                     break;
                 default:
-                    throw new InvalidEnumArgumentException("A non existing game mode has been chosen");
+                    throw new InvalidEnumArgumentException("An invalid game mode has been chosen");
             }
         }
     }
@@ -143,8 +172,6 @@ public class GameManager : MonoBehaviour {
         CardBehaviour.selectTwo = null;
     }
 
-
-
     //Sends event with text from amount of sets completed.
     private void SetSetsText()
     {
@@ -158,7 +185,7 @@ public class GameManager : MonoBehaviour {
     private void SetTurnText(int turn)
     {
         ChangeTurnTextEventArgs args = new ChangeTurnTextEventArgs();
-        args.TurnLeft = turn.ToString();
+        args.TurnLeft = turn;
         ChangeTurnLeft(gameObject, args);
     }
 
@@ -166,7 +193,7 @@ public class GameManager : MonoBehaviour {
     private void SetTimeText(int time)
     {
         ChangeTimeTextEventArgs args = new ChangeTimeTextEventArgs();
-        args.TimeLeft = time.ToString();
+        args.TimeLeft = time;
         ChangeTimeLeft(gameObject, args);
     }
 
@@ -185,6 +212,20 @@ public class GameManager : MonoBehaviour {
             else
             {
                 WinCondition();
+
+                switch (gameMode)
+                {
+                    case GameMode.Relax:
+                        aTracker.SetRelaxModeWin();
+                        break;
+                    case GameMode.Turns:
+                        aTracker.SetTurnModeWin();
+                        aTracker.SetHighestTurnsLeft(turnLeft);
+                        break;
+                    case GameMode.Time:
+                        aTracker.SetHighestTimeLeft(timeLeft);
+                        break;
+                }
             }
         }
     }
@@ -214,6 +255,7 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    //better if this would be places in DeckBuilder class
     private void ResetBoard()
     {
         correctSets = 0;
@@ -227,10 +269,13 @@ public class GameManager : MonoBehaviour {
     private void WinCondition()
     {
         //Whatever happens the player wins the round.
+        lManager.LoadScene("Menu");
+        CancelInvoke("CheckTimeLeft");
     }
 
     private void LoseCondition()
     {
         //Whatever happens when the player loses the round.
+        lManager.LoadScene("Menu");
     }
 }

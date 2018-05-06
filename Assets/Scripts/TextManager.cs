@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+    // Make parent of all Text elements. so can use GetComponent - private Texts. <
+    
 public class TextManager : MonoBehaviour {
 
     public Text SetsText;
@@ -39,22 +41,25 @@ public class TextManager : MonoBehaviour {
 
     private void SetTurnText(object sender, ChangeTurnTextEventArgs e)
     {
-        if (e.TurnLeft == "0")
+        if (e.TurnLeft <= 0)
         {
-            e.TurnLeft = "--";
+            TurnText.text = "-- Turns Left";
         }
-
-        TurnText.text = string.Format("{0} Turns Left", e.TurnLeft);
-
+        else
+        {
+            TurnText.text = string.Format("{0} Turns Left", e.TurnLeft);
+        }
     }
 
     private void SetTimeText(object sender, ChangeTimeTextEventArgs e)
     {
-        if (e.TimeLeft == "0")
+        if (e.TimeLeft <= 0)
         {
-            e.TimeLeft = "--";
+            TimeText.text = "-- Sec Left";
         }
-
-        TimeText.text = string.Format("{0} Sec Left", e.TimeLeft);
+        else
+        {
+            TimeText.text = string.Format("{0} Sec Left", e.TimeLeft);
+        }
     }
 }

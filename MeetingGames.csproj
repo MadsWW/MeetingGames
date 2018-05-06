@@ -225,10 +225,13 @@
     <Compile Include="Assets\Scripts\Achievement.cs" />
     <Compile Include="Assets\Scripts\AchievementTracker.cs" />
     <Compile Include="Assets\Scripts\CardBehaviour.cs" />
-    <Compile Include="Assets\Scripts\CheckCardDelegate.cs" />
-    <Compile Include="Assets\Scripts\CheckCardEventArgs.cs" />
+    <Compile Include="Assets\Scripts\DataManager.cs" />
     <Compile Include="Assets\Scripts\DeckBuilder.cs" />
+    <Compile Include="Assets\Scripts\Delegates.cs" />
+    <Compile Include="Assets\Scripts\EventArgs.cs" />
+    <Compile Include="Assets\Scripts\GameData.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\GameModeButton.cs" />
     <Compile Include="Assets\Scripts\LevelManager.cs" />
     <Compile Include="Assets\Scripts\LevelSizeButton.cs" />
     <Compile Include="Assets\Scripts\TextManager.cs" />

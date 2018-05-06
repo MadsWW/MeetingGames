@@ -2,29 +2,110 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public enum AchievementType { RelaxWins, TurnWins, TurnsLeft, TimeLeft, TimeSurvived }
 
 
-//! Because this is not Monobehaviour does Achievements list get cleared automaticly? or do I need to clear it on disable?
-//! Instead of static class maybe initialise this in gamemanager?
-public static class AchievementTracker
+public  class AchievementTracker : MonoBehaviour
 {
-    public static event UnlockAchievementDelegate UnlockAchievement;
-    public static List<Achievement> Achievements = new List<Achievement>();
+    public event UnlockAchievementDelegate UnlockAchievement;
+
+    private static AchievementTracker aTracker = null;
+
+    private DataManager dataManager;
 
     // data below should be saved
 
-    private static int relaxModeWins;
-    private static int turnModeWins;
-    private static int highestTurnsLeft;
-    private static int highestTimeLeft;
-    private static int highestTimeSurvived;
+    private int relaxModeWins;
+    private int turnModeWins;
+    private int highestTurnsLeft;
+    private int highestTimeLeft;
+    private int highestTimeSurvived;
 
+    private void Awake()
+    {
+        if (aTracker == null)
+        {
+            aTracker = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        dataManager = FindObjectOfType<DataManager>();
+        if(dataManager.LoadData() != null)
+        {
+            GameData gameData = dataManager.LoadData();
+            SetDataFromLoad(gameData);
+        }
+
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void SetDataFromLoad(GameData data)
+    {
+        relaxModeWins = data.relaxModeWins;
+        turnModeWins = data.turnModeWins;
+        highestTurnsLeft = data.highestTurnsLeft;
+        highestTimeLeft = data.highestTimeLeft;
+        highestTimeSurvived = data.highestTimeSurvived;
+    }
+
+    private GameData SetDataToSave()
+    {
+        GameData saveData = new GameData();
+        saveData.relaxModeWins = relaxModeWins;
+        saveData.turnModeWins = turnModeWins;
+        saveData.highestTurnsLeft = highestTurnsLeft;
+        saveData.highestTimeLeft = highestTimeLeft;
+        saveData.highestTimeSurvived = highestTimeSurvived;
+
+        return saveData;
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += LoadedScene;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= LoadedScene;
+
+    }
+
+    private void CheckAchievement(AchievementType aType, int amount)
+    {
+        UnlockAchievementEventArgs args = new UnlockAchievementEventArgs();
+        args.AchieveType = aType;
+        args.Amount = amount;
+
+        UnlockAchievement(this, args);
+    }
+
+    //When menu scene is loaded set all achievements.
+    private void LoadedScene(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Menu") // Replace with public scene veriable.
+        {
+            CheckAchievement(AchievementType.RelaxWins, relaxModeWins);
+            CheckAchievement(AchievementType.TurnWins, turnModeWins);
+            CheckAchievement(AchievementType.TurnsLeft, highestTurnsLeft);
+            CheckAchievement(AchievementType.TimeLeft, highestTimeLeft);
+            CheckAchievement(AchievementType.TimeSurvived, highestTimeSurvived);
+
+            dataManager.SaveData(SetDataToSave());
+        }
+    }
+
+
+    //Only here when statistics page is made.
     #region //PROPERTIES
 
-    public static int RelaxModeWins
+    public int RelaxModeWins
     {
         get
         {
@@ -32,7 +113,7 @@ public static class AchievementTracker
         }
     }
 
-    public static int TurnModeWins
+    public int TurnModeWins
     {
         get
         {
@@ -40,7 +121,7 @@ public static class AchievementTracker
         }
     }
 
-    public static int HighestTurnsleft
+    public int HighestTurnsleft
     {
         get
         {
@@ -48,7 +129,7 @@ public static class AchievementTracker
         }
     }
 
-    public static int HighestTimeLeft
+    public int HighestTimeLeft
     {
         get
         {
@@ -56,7 +137,7 @@ public static class AchievementTracker
         }
     }
 
-    public static int HighestTimeSurvived
+    public int HighestTimeSurvived
     {
         get
         {
@@ -66,54 +147,44 @@ public static class AchievementTracker
 
     #endregion //PROPERTIES
 
+    // Can be set in properties
     #region //SET_VARIABLES_FUNCTIONS
 
-    public static void SetRelaxModeWin()
+    public void SetRelaxModeWin()
     {
         relaxModeWins++;
-        CheckAchievement(AchievementType.RelaxWins, relaxModeWins);
     }
 
-    public static void SetTurnModeWin()
+    public void SetTurnModeWin()
     {
         turnModeWins++;
-        CheckAchievement(AchievementType.TurnWins, turnModeWins);
     }
 
-    public static void SetHighestTurnsLeft(int turnsLeft)
+    public void SetHighestTurnsLeft(int turnsLeft)
     {
         if(turnsLeft > highestTurnsLeft)
         {
             highestTurnsLeft = turnsLeft;
-            CheckAchievement(AchievementType.TurnsLeft, highestTurnsLeft);
         }
     }
 
-    public static void SetHighestTimeLeft(int timeLeft)
+    public void SetHighestTimeLeft(int timeLeft)
     {
         if(timeLeft > highestTimeLeft)
         {
             highestTimeLeft = timeLeft;
-            CheckAchievement(AchievementType.TimeLeft, highestTimeLeft);
         }
     }
 
-    public static void SetHighestTimeSurvived(int survivedTime)
+    public void SetHighestTimeSurvived(int survivedTime)
     {
         if(survivedTime > highestTimeSurvived)
         {
             highestTimeSurvived = survivedTime;
-            CheckAchievement(AchievementType.TimeSurvived, highestTimeSurvived);
         }
     }
 
     #endregion //SET_VARIABLES_FUNCTIONS
 
-    private static void CheckAchievement(AchievementType aType, int amount)
-    {
-        UnlockAchievementEventArgs args = new UnlockAchievementEventArgs();
-        args.AchieveType = aType;
-        args.Amount = amount;
-        UnlockAchievement(null, args);
-    }
+
 }
