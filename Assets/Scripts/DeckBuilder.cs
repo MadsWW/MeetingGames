@@ -7,6 +7,7 @@ public class DeckBuilder : MonoBehaviour {
     public GameObject _memoryCard;
 
     public Sprite[] _spriteCollection;
+    public Sprite _cardBack;
 
     List<Sprite> _sprites = new List<Sprite>();
     List<int> recurredNumbers = new List<int>();

@@ -5,19 +5,20 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    private GameObject[] UIPanels;
+    public RectTransform[] UIPanels;
 
-    private void Start()
+    public void EnablePanel(RectTransform go)
     {
-        UIPanels = GetComponentsInChildren<GameObject>();
-    }
-    public void EnablePanel(Panel panel)
-    {
-        foreach(GameObject gObject in UIPanels)
+        foreach(RectTransform gObject in UIPanels)
         {
-            gObject.SetActive(false);
+            if(gObject == go)
+            {
+                gObject.gameObject.SetActive(true);
+            }
+            else
+            {
+                gObject.gameObject.SetActive(false);
+            }
         }
-
-        go.SetActive(true);
     }
 }

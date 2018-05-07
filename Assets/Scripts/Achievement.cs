@@ -54,6 +54,6 @@ public class Achievement : MonoBehaviour {
 
     private void SetAchievementText()
     {
-        AchievementText.text = string.Format("{0}\nBest: {1} / {2}", Message, AmountAchieved, AmountToAchieve);
+        AchievementText.text = string.Format("{0}\nProgress: {1} / {2}", Message, AmountAchieved, AmountToAchieve);
     }
 }

@@ -89,16 +89,19 @@ public  class AchievementTracker : MonoBehaviour
     //When menu scene is loaded set all achievements.
     private void LoadedScene(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "Menu") // Replace with public scene veriable.
+        if (scene.name == "Menu")
         {
-            CheckAchievement(AchievementType.RelaxWins, relaxModeWins);
-            CheckAchievement(AchievementType.TurnWins, turnModeWins);
-            CheckAchievement(AchievementType.TurnsLeft, highestTurnsLeft);
-            CheckAchievement(AchievementType.TimeLeft, highestTimeLeft);
-            CheckAchievement(AchievementType.TimeSurvived, highestTimeSurvived);
-
             dataManager.SaveData(SetDataToSave());
         }
+    }
+
+    public void SetAchievements()
+    {
+        CheckAchievement(AchievementType.RelaxWins, relaxModeWins);
+        CheckAchievement(AchievementType.TurnWins, turnModeWins);
+        CheckAchievement(AchievementType.TurnsLeft, highestTurnsLeft);
+        CheckAchievement(AchievementType.TimeLeft, highestTimeLeft);
+        CheckAchievement(AchievementType.TimeSurvived, highestTimeSurvived);
     }
 
 

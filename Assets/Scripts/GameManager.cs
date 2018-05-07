@@ -32,6 +32,9 @@ public class GameManager : MonoBehaviour {
     private int amountOfSets = 1;
     private int correctSets;
 
+    public Sprite[] CardDeck;
+    public Sprite CardBack;
+
     private int turnLeft = 20;
     private int timeLeft = 100;
 
@@ -43,16 +46,12 @@ public class GameManager : MonoBehaviour {
     //Dont Destroy Object.
     private void Awake()
     {
-    
-
-
         if (gManager == null)
         {
             gManager = this;
         }
         else
         {
-            print("got destroyed");
             Destroy(gameObject);
         }
 
