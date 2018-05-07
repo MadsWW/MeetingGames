@@ -76,7 +76,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TypeOfAchievement: 0
   AmountToAchieve: 10
-  Message: Win 10 times in Relax Mode
+  AmountAchieved: 0
+  Message: Win in Relax Mode
   AchievementText: {fileID: 114583781438972734}
 --- !u!114 &114275139313251216
 MonoBehaviour:
@@ -128,9 +129,9 @@ MonoBehaviour:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 14
     m_FontStyle: 0
-    m_BestFit: 0
+    m_BestFit: 1
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 34
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -190,7 +191,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1937897146074310}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -85.3, y: 0, z: 0}
+  m_LocalPosition: {x: -188.09999, y: -0.000015258789, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224708934923137828}
@@ -198,8 +199,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -85.3, y: 0.0000011921}
-  m_SizeDelta: {x: 68.54, y: 68.51}
+  m_AnchoredPosition: {x: -188.1, y: -0.000015736}
+  m_SizeDelta: {x: 140.4, y: 140.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224545938909658050
 RectTransform:
@@ -208,7 +209,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1323206374118186}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 34.5, y: -0.20999908, z: 0}
+  m_LocalPosition: {x: 83.9, y: 0.000076293945, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224708934923137828}
@@ -216,8 +217,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 34.5, y: -0.21}
-  m_SizeDelta: {x: 160, y: 60.42}
+  m_AnchoredPosition: {x: 83.9, y: 0.000076294}
+  m_SizeDelta: {x: 353.9, y: 140.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224708934923137828
 RectTransform:
@@ -225,8 +226,8 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1371375694915260}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -452.90005, y: 47.24997, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 177, y: 869, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224276652496478290}
@@ -236,6 +237,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -452.90005, y: 47.24997}
-  m_SizeDelta: {x: -99.8, y: -541.5}
+  m_AnchoredPosition: {x: 177, y: 869}
+  m_SizeDelta: {x: 547.7, y: 165.1}
   m_Pivot: {x: 0.5, y: 0.5}
