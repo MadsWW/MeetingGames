@@ -7,6 +7,7 @@ public class UIController : MonoBehaviour
 {
     public RectTransform[] UIPanels;
 
+
     public void EnablePanel(RectTransform go)
     {
         foreach(RectTransform gObject in UIPanels)

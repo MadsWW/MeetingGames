@@ -35,3 +35,11 @@ public class UnlockAchievementEventArgs : EventArgs
     public AchievementType AchieveType { get; set; }
     public int Amount { get; set; }
 }
+
+public class PushCardBackInfoEventArgs : EventArgs
+{
+    public int CardInfoNumber { get; set; }
+    public CardType TypeOfCard { get; set; }
+    public CardInfo CardBackInfo { get; set; }
+
+}
