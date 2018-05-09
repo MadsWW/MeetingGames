@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// Doesnt have to be a monobehaviour - can be initialized in code.
+// Make it so that the functions can take generic type T
 public class DataManager : MonoBehaviour {
 
 
@@ -13,12 +16,7 @@ public class DataManager : MonoBehaviour {
         FileStream fs = File.Create(Application.persistentDataPath + "/gameData.dat"); // replace hardcoded file to string.
 
         GameData data = new GameData();
-        data.relaxModeWins = inputData.relaxModeWins;
-        data.turnModeWins = inputData.turnModeWins;
-        data.highestTurnsLeft = inputData.highestTurnsLeft;
-        data.highestTimeLeft = inputData.highestTimeLeft;
-        data.highestTimeSurvived = inputData.highestTimeSurvived;
-
+        data.AchievementsData = inputData.AchievementsData;
 
         bf.Serialize(fs, data);
         fs.Close();

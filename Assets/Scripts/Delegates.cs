@@ -7,7 +7,7 @@ public delegate void SetBoardSizeDelegate(object sender, SetBoardSizeEventArgs e
 public delegate void ChangeSetsTextDelegate(object sender, ChangeSetsTextEventArgs e);
 public delegate void ChangeTurnTextDelegate(object sender, ChangeTurnTextEventArgs e);
 public delegate void ChangeTimeTextDelegate(object sender, ChangeTimeTextEventArgs e);
-public delegate void UnlockAchievementDelegate(object sender, UnlockAchievementEventArgs e);
+public delegate void SetAchievementDataDelegate(object sender, SetAchievementDataEventArgs e);
 public delegate void PushCardBackInfoDelegate(object sender, PushCardBackInfoEventArgs e);
 
 

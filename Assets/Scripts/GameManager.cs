@@ -9,9 +9,8 @@ public enum GameMode { Relax, Turns, Time, Endless }
 
 public class GameManager : MonoBehaviour {
 
-    //!! Rework To Do - Check Line: 31,232,176, 236
+    //!! Rework To Do - Check Line:232,176, 236
     //!! 176: All CheckTurn/Time/Sets Method could be one separate function with 2 int or float params saves space.
-    //!! 31: Make gamemanager into singleton.
     //!! 232: Place resetboard in DeckBuilder Class
     //!! 236: Add method for endless gamemode to add less then the more rounds the player won.
 
@@ -32,15 +31,21 @@ public class GameManager : MonoBehaviour {
     private int amountOfSets = 1;
     private int correctSets;
 
+    //Card Front Sprites
     public Sprite[] CardDeck;
+    //Card Back Sprite
     public Sprite CardBack;
 
-    private int turnLeft = 20;
+    private int turnLeft = 30;
     private int timeLeft = 100;
+    private int timeSurvived = 0;
 
     DeckBuilder buildDeck;
-    AchievementTracker aTracker;
+    AchievementInfo aInfo;
     LevelManager lManager;
+
+    //More understandable if divided into 5 seperate integers.
+    private int[] amountAchievedPerGameMode = new int[] { 0, 0, 0, 0, 0 };
 
 
     //Dont Destroy Object.
@@ -56,7 +61,8 @@ public class GameManager : MonoBehaviour {
         }
 
         DontDestroyOnLoad(gameObject);
-        aTracker = FindObjectOfType<AchievementTracker>();
+
+        aInfo = FindObjectOfType<AchievementInfo>();
         lManager = FindObjectOfType<LevelManager>();
 
     }
@@ -83,6 +89,7 @@ public class GameManager : MonoBehaviour {
         CardBehaviour.CheckCard -= CheckCorrectCall;
     }
 
+    #region BOARD_SIZE_EVENT_METHODS
     //Sets rows/cols depending on menu button input.
     private void SetupGame(object sender, SetBoardSizeEventArgs args)
     {
@@ -98,13 +105,16 @@ public class GameManager : MonoBehaviour {
         amountOfSets = (rows * cols) / 2;
     }
 
+    #endregion BOARD_SIZE_EVENT_METHODS
+
     //Passes amount of rows/cols/sets to DeckBuilder when the memory scene is loaded.
     private void LoadedScene(Scene scene, LoadSceneMode mode)
     {
-        bool correctScene = scene.name == "Memory"; //Replace with public scene variable.
+        bool memoryScene = scene.name == "Memory";
+        bool menuScene = scene.name == "Menu";
         bool scriptAvailable = FindObjectOfType<DeckBuilder>();
 
-        if (correctScene && scriptAvailable)
+        if (memoryScene && scriptAvailable)
         {
             buildDeck = FindObjectOfType<DeckBuilder>();
 
@@ -121,7 +131,7 @@ public class GameManager : MonoBehaviour {
                 case GameMode.Relax:
                     break;
                 case GameMode.Turns:
-                    turnLeft = 20;
+                    turnLeft = 30;
                     SetTurnText(turnLeft);
                     break;
                 case GameMode.Time:
@@ -138,7 +148,15 @@ public class GameManager : MonoBehaviour {
                     throw new InvalidEnumArgumentException("An invalid game mode has been chosen");
             }
         }
+
+        if (menuScene)
+        {
+            //Load data from achievementmanager to achievedamount var.
+            //Set Data from achievedamount to achievementmanager
+        }
     }
+
+    #region CHECK_SELECTEDCARDCORRECT_METHODS
 
     //Check if the two selectedCards are equal to eachother and resets the selected cards afterwards.
     private void CheckCorrectCall(object sender, CheckCardEventArgs e)
@@ -148,7 +166,6 @@ public class GameManager : MonoBehaviour {
             CheckTurnLeft();
         }
         
-
         bool sameCards = e.CardOne.spriteRen.sprite == e.CardTwo.spriteRen.sprite;
         if (sameCards)
         {
@@ -170,6 +187,10 @@ public class GameManager : MonoBehaviour {
         CardBehaviour.selectOne = null;
         CardBehaviour.selectTwo = null;
     }
+
+    #endregion CHECK_SELECTEDCARDCORRECT_METHODS
+
+    #region SET_TEXT_FUNCTIONS
 
     //Sends event with text from amount of sets completed.
     private void SetSetsText()
@@ -196,6 +217,49 @@ public class GameManager : MonoBehaviour {
         ChangeTimeLeft(gameObject, args);
     }
 
+    #endregion SET_TEXT_FUNCTIONS
+
+    #region SET_HIGHEST_ACHIEVED_METHODS
+
+    private int SetHighestTurnLeft()
+    {
+        if(turnLeft > amountAchievedPerGameMode[2])
+        {
+            return turnLeft;
+        }
+        else
+        {
+            return amountAchievedPerGameMode[2];
+        }
+    }
+
+    private int SetHighestTimeLeft()
+    {
+        if(timeLeft > amountAchievedPerGameMode[3])
+        {
+            return timeLeft;
+        }
+        else
+        {
+            return amountAchievedPerGameMode[3];
+        }
+    }
+
+    private int SetHighestTimeSurvived()
+    {
+        if(timeSurvived > amountAchievedPerGameMode[4])
+        {
+            return timeSurvived;
+        }
+        else
+        {
+            return amountAchievedPerGameMode[4];
+        }
+    }
+
+    #endregion SET_HIGHEST_ACHIEVED_METHODS
+
+    #region CHECK_WHATISLEFT_PERGAMEMODE_METHODS
     //Checks if all sets have been completed and passes that to event.
     private void CheckSetsLeft()
     {
@@ -204,25 +268,26 @@ public class GameManager : MonoBehaviour {
 
         if (correctSets >= amountOfSets)
         {
-            if(gameMode == GameMode.Endless)
+            if (gameMode == GameMode.Endless)
             {
+                timeSurvived += timeLeft;
                 ResetBoard();
             }
             else
             {
-                WinCondition();
+                Win();
 
                 switch (gameMode)
                 {
                     case GameMode.Relax:
-                        aTracker.SetRelaxModeWin();
+                        amountAchievedPerGameMode[0]++;
                         break;
                     case GameMode.Turns:
-                        aTracker.SetTurnModeWin();
-                        aTracker.SetHighestTurnsLeft(turnLeft);
+                        amountAchievedPerGameMode[1]++;
+                        amountAchievedPerGameMode[2] = SetHighestTurnLeft();
                         break;
                     case GameMode.Time:
-                        aTracker.SetHighestTimeLeft(timeLeft);
+                        amountAchievedPerGameMode[3] = SetHighestTimeLeft();
                         break;
                 }
             }
@@ -237,20 +302,27 @@ public class GameManager : MonoBehaviour {
 
         if(turnLeft <= 0)
         {
-            LoseCondition();
+            Lose();
         }
     }
 
     //Checks how much time is left and passes that to event.
     private void CheckTimeLeft()
     {
+
+
         timeLeft--;
         SetTimeText(timeLeft);
 
         if (timeLeft <= 0)
         {
+            if (gameMode == GameMode.Endless)
+            {
+                amountAchievedPerGameMode[4] = SetHighestTimeSurvived();
+            }
+
             CancelInvoke("CheckTimeLeft");
-            LoseCondition();
+            Lose();
         }
     }
 
@@ -265,14 +337,19 @@ public class GameManager : MonoBehaviour {
         buildDeck.PlaceCards(rows, cols);
     }
 
-    private void WinCondition()
+    #endregion CHECK_WHATISLEFT_PERGAMEMODE_METHODS
+
+
+    //ui pop when game is won.
+    private void Win()
     {
         //Whatever happens the player wins the round.
         lManager.LoadScene("Menu");
         CancelInvoke("CheckTimeLeft");
     }
 
-    private void LoseCondition()
+    //ui pop when game is lost.
+    private void Lose()
     {
         //Whatever happens when the player loses the round.
         lManager.LoadScene("Menu");

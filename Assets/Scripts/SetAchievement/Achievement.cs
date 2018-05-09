@@ -1,58 +1,73 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Achievement : MonoBehaviour {
+[Serializable]
+public class Achievement
+{
 
     // Make achievement from code instead of predefining them.
     // Build same as ChangeCardSprites scripts.
 
+    // Variables set from achievementTracker
 
-    public AchievementType TypeOfAchievement;
-    public int AmountToAchieve;
-    public int AmountAchieved;
-    public string Message;
-    private bool IsUnlocked = false;
-    private AchievementTracker aTracker;
+    private int amountToAchieve;
+    private int amountAchieved;
+    private int cashReward;
+    private bool isUnlocked = false;
+    private string message;
 
-    //Unlockable rewarde here;
 
-    public Text AchievementText;
-
-    private void Awake()
+    //!!Work on naming the params, may cause confusion for outsider. 
+    public Achievement(int achieveAmount, int achievedAmount, int reward, bool unlock, string achievInfo)
     {
-        aTracker = FindObjectOfType<AchievementTracker>();
-        SetAchievementText();
+        amountToAchieve = achieveAmount;
+        amountAchieved = achievedAmount;
+        cashReward = reward;
+        isUnlocked = unlock;
+        message = achievInfo;
     }
 
-    private void OnEnable()
+    public int AmountToAchieve
     {
-        aTracker.UnlockAchievement += CheckForCompleted;
-    }
-
-    private void OnDisable()
-    {
-        aTracker.UnlockAchievement -= CheckForCompleted;
-    }
-
-    private void CheckForCompleted(object sender, UnlockAchievementEventArgs e)
-    {
-        if(TypeOfAchievement == e.AchieveType && e.Amount > AmountAchieved)
+        get
         {
-            AmountAchieved = e.Amount;
-            SetAchievementText();
-        }
-
-        if(TypeOfAchievement == e.AchieveType && AmountToAchieve == e.Amount)
-        {
-            IsUnlocked = true;
-            //Enable the reward.
+            return amountToAchieve;
         }
     }
 
-    private void SetAchievementText()
+    public int AmountAchieved
     {
-        AchievementText.text = string.Format("{0}\nProgress: {1} / {2}", Message, AmountAchieved, AmountToAchieve);
+        get
+        {
+            return amountAchieved;
+        }
     }
+
+    public int CashReward
+    {
+        get
+        {
+            return cashReward;
+        }
+    }
+
+    public bool IsUnlocked
+    {
+        get
+        {
+            return isUnlocked;
+        }
+    }
+
+    public string Message
+    {
+        get
+        {
+            return message;
+        }
+    }
+
 }
