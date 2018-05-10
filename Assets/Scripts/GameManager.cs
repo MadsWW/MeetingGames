@@ -18,10 +18,8 @@ public class GameManager : MonoBehaviour {
     public event ChangeSetsTextDelegate ChangeSetsLeft;
     public event ChangeTurnTextDelegate ChangeTurnLeft;
     public event ChangeTimeTextDelegate ChangeTimeLeft;
-
-    //Can be private
  
-    public GameMode gameMode;
+    private GameMode gameMode;
 
     private static GameManager gManager = null;
 
@@ -36,41 +34,39 @@ public class GameManager : MonoBehaviour {
     //Card Back Sprite
     public Sprite CardBack;
 
+    //Start values for gamemodes
     private int turnLeft = 30;
     private int timeLeft = 100;
     private int timeSurvived = 0;
 
+    //Classes needed for methods
     DeckBuilder buildDeck;
     AchievementInfo aInfo;
     LevelManager lManager;
+    DataManager dManager;
 
     //More understandable if divided into 5 seperate integers.
-    private int[] amountAchievedPerGameMode = new int[] { 0, 0, 0, 0, 0 };
+    private Achievement[] achievements = new Achievement[5];
 
-
+   
+    #region ENABLE_DISABLE_METHODS
     //Dont Destroy Object.
     private void Awake()
     {
         if (gManager == null)
         {
             gManager = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
 
-        DontDestroyOnLoad(gameObject);
-
-        aInfo = FindObjectOfType<AchievementInfo>();
         lManager = FindObjectOfType<LevelManager>();
+        dManager = new DataManager();
 
-    }
 
-    //Sets the GameMode from menu button - OnClick() does not support enum/thats why its integer.
-    public void SetGameMode(GameMode mode)
-    {
-        gameMode = mode;
     }
 
     //Add to events
@@ -89,9 +85,18 @@ public class GameManager : MonoBehaviour {
         CardBehaviour.CheckCard -= CheckCorrectCall;
     }
 
+    #endregion ENABLE_DISABLE_METHODS
+
+    //Sets the GameMode from menu button - OnClick() does not support enum/thats why its integer.
+    public void SetGameMode(GameMode mode)
+    {
+        gameMode = mode;
+    }
+
+
     #region BOARD_SIZE_EVENT_METHODS
     //Sets rows/cols depending on menu button input.
-    private void SetupGame(object sender, SetBoardSizeEventArgs args)
+    private void SetupGame(SetBoardSizeEventArgs args)
     {
         correctSets = 0;
         rows = args.BoardHeight;
@@ -107,15 +112,19 @@ public class GameManager : MonoBehaviour {
 
     #endregion BOARD_SIZE_EVENT_METHODS
 
+    #region SCENE_LOADED_METHOD
     //Passes amount of rows/cols/sets to DeckBuilder when the memory scene is loaded.
     private void LoadedScene(Scene scene, LoadSceneMode mode)
     {
+        LoadData();
+
         bool memoryScene = scene.name == "Memory";
-        bool menuScene = scene.name == "Menu";
         bool scriptAvailable = FindObjectOfType<DeckBuilder>();
 
         if (memoryScene && scriptAvailable)
         {
+
+
             buildDeck = FindObjectOfType<DeckBuilder>();
 
             buildDeck.GetSpriteSets(amountOfSets);
@@ -148,18 +157,34 @@ public class GameManager : MonoBehaviour {
                     throw new InvalidEnumArgumentException("An invalid game mode has been chosen");
             }
         }
-
-        if (menuScene)
-        {
-            //Load data from achievementmanager to achievedamount var.
-            //Set Data from achievedamount to achievementmanager
-        }
     }
 
-    #region CHECK_SELECTEDCARDCORRECT_METHODS
+    private void LoadData()
+    {
+        if (dManager.LoadData() != null)
+        {
+            GameData data = dManager.LoadData();
+            achievements = data.achievements;
+        }
+
+    }
+
+    private void SaveData()
+    {
+        GameData data = new GameData();
+
+        data.achievements = achievements;
+
+        dManager.SaveData(data);
+    }
+
+
+    #endregion SCENE_LOADED_METHOD
+
+    #region CHECKCARD_EVENT_METHODS
 
     //Check if the two selectedCards are equal to eachother and resets the selected cards afterwards.
-    private void CheckCorrectCall(object sender, CheckCardEventArgs e)
+    private void CheckCorrectCall(CheckCardEventArgs e)
     {
         if (gameMode == GameMode.Turns)
         {
@@ -188,7 +213,7 @@ public class GameManager : MonoBehaviour {
         CardBehaviour.selectTwo = null;
     }
 
-    #endregion CHECK_SELECTEDCARDCORRECT_METHODS
+    #endregion CHECKCARD_EVENT_METHODS
 
     #region SET_TEXT_FUNCTIONS
 
@@ -198,7 +223,7 @@ public class GameManager : MonoBehaviour {
         ChangeSetsTextEventArgs args = new ChangeSetsTextEventArgs();
         args.CurrentSets = correctSets.ToString();
         args.AmountOfSets = amountOfSets.ToString();
-        ChangeSetsLeft(gameObject, args);
+        ChangeSetsLeft(args);
     }
 
     //Sends event with amount of turns left.
@@ -206,7 +231,7 @@ public class GameManager : MonoBehaviour {
     {
         ChangeTurnTextEventArgs args = new ChangeTurnTextEventArgs();
         args.TurnLeft = turn;
-        ChangeTurnLeft(gameObject, args);
+        ChangeTurnLeft(args);
     }
 
     //Sends event with amount of time left.
@@ -214,7 +239,7 @@ public class GameManager : MonoBehaviour {
     {
         ChangeTimeTextEventArgs args = new ChangeTimeTextEventArgs();
         args.TimeLeft = time;
-        ChangeTimeLeft(gameObject, args);
+        ChangeTimeLeft(args);
     }
 
     #endregion SET_TEXT_FUNCTIONS
@@ -223,37 +248,37 @@ public class GameManager : MonoBehaviour {
 
     private int SetHighestTurnLeft()
     {
-        if(turnLeft > amountAchievedPerGameMode[2])
+        if(turnLeft > achievements[2].amountAchieved)
         {
             return turnLeft;
         }
         else
         {
-            return amountAchievedPerGameMode[2];
+            return achievements[2].amountAchieved;
         }
     }
 
     private int SetHighestTimeLeft()
     {
-        if(timeLeft > amountAchievedPerGameMode[3])
+        if(timeLeft > achievements[3].amountAchieved)
         {
             return timeLeft;
         }
         else
         {
-            return amountAchievedPerGameMode[3];
+            return achievements[3].amountAchieved;
         }
     }
 
     private int SetHighestTimeSurvived()
     {
-        if(timeSurvived > amountAchievedPerGameMode[4])
+        if(timeSurvived > achievements[4].amountAchieved)
         {
             return timeSurvived;
         }
         else
         {
-            return amountAchievedPerGameMode[4];
+            return achievements[4].amountAchieved;
         }
     }
 
@@ -275,19 +300,20 @@ public class GameManager : MonoBehaviour {
             }
             else
             {
-                Win();
-
                 switch (gameMode)
                 {
                     case GameMode.Relax:
-                        amountAchievedPerGameMode[0]++;
+                        achievements[0].amountAchieved++;
+                        Win();
                         break;
                     case GameMode.Turns:
-                        amountAchievedPerGameMode[1]++;
-                        amountAchievedPerGameMode[2] = SetHighestTurnLeft();
+                        achievements[1].amountAchieved++;
+                        achievements[2].amountAchieved = SetHighestTurnLeft();
+                        Win();
                         break;
                     case GameMode.Time:
-                        amountAchievedPerGameMode[3] = SetHighestTimeLeft();
+                        achievements[3].amountAchieved = SetHighestTimeLeft();
+                        Win();
                         break;
                 }
             }
@@ -318,7 +344,7 @@ public class GameManager : MonoBehaviour {
         {
             if (gameMode == GameMode.Endless)
             {
-                amountAchievedPerGameMode[4] = SetHighestTimeSurvived();
+                achievements[4].amountAchieved = SetHighestTimeSurvived();
             }
 
             CancelInvoke("CheckTimeLeft");
@@ -343,15 +369,18 @@ public class GameManager : MonoBehaviour {
     //ui pop when game is won.
     private void Win()
     {
-        //Whatever happens the player wins the round.
-        lManager.LoadScene("Menu");
+        SaveData();
         CancelInvoke("CheckTimeLeft");
+        lManager.LoadScene("Menu");
+        //Whatever happens the player wins the round.
     }
 
     //ui pop when game is lost.
     private void Lose()
     {
+        SaveData();
         //Whatever happens when the player loses the round.
         lManager.LoadScene("Menu");
     }
+
 }

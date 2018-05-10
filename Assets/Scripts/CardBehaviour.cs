@@ -59,7 +59,7 @@ public class CardBehaviour : MonoBehaviour {
         CheckCardEventArgs e = new CheckCardEventArgs();
         e.CardOne = selectOne;
         e.CardTwo = selectTwo;
-        CheckCard(gameObject, e);
+        CheckCard(e);
     }
 
     //Sets sprite when instantiated

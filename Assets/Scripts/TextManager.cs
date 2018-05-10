@@ -34,12 +34,12 @@ public class TextManager : MonoBehaviour {
         gManager.ChangeTimeLeft -= SetTimeText;
     }
 
-    private void SetSetsText(object sender, ChangeSetsTextEventArgs e)
+    private void SetSetsText(ChangeSetsTextEventArgs e)
     {
         SetsText.text = string.Format("{0} / {1} Sets", e.CurrentSets, e.AmountOfSets);
     }
 
-    private void SetTurnText(object sender, ChangeTurnTextEventArgs e)
+    private void SetTurnText(ChangeTurnTextEventArgs e)
     {
         if (e.TurnLeft <= 0)
         {
@@ -51,7 +51,7 @@ public class TextManager : MonoBehaviour {
         }
     }
 
-    private void SetTimeText(object sender, ChangeTimeTextEventArgs e)
+    private void SetTimeText(ChangeTimeTextEventArgs e)
     {
         if (e.TimeLeft <= 0)
         {

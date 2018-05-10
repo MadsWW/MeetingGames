@@ -5,18 +5,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-// Doesnt have to be a monobehaviour - can be initialized in code.
+// Make MonoBehaviour and set data from event.
 // Make it so that the functions can take generic type T
-public class DataManager : MonoBehaviour {
+public class DataManager{
 
 
-    public void SaveData(GameData inputData)
+    public void SaveData(GameData data)
     {
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream fs = File.Create(Application.persistentDataPath + "/gameData.dat"); // replace hardcoded file to string.
-
-        GameData data = new GameData();
-        data.AchievementsData = inputData.AchievementsData;
+        FileStream fs = File.Create(Application.persistentDataPath + "/gamedata.dat"); // replace hardcoded file to string.
 
         bf.Serialize(fs, data);
         fs.Close();
@@ -25,14 +22,17 @@ public class DataManager : MonoBehaviour {
 
     public GameData LoadData()
     {
-        if(File.Exists(Application.persistentDataPath + "/gameData.dat"))
+        if(File.Exists(Application.persistentDataPath + "/gamedata.dat"))
         {
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/gameData.dat", FileMode.Open);
+            FileStream file = File.Open(Application.persistentDataPath + "/gamedata.dat", FileMode.Open);
             GameData data = (GameData)bf.Deserialize(file);
             file.Close();
             return data;
         }
-        return null;
+        else
+        {
+            return null;
+        }
     }
 }

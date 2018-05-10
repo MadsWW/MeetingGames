@@ -9,8 +9,10 @@ public  class AchievementInfo : MonoBehaviour
     //Event that sets achievement data
     public event SetAchievementDataDelegate SetAchievementDataEvent;
 
+
     // Class to save data.
     private DataManager dataManager;
+
 
     //Needs to be saved.
     private Achievement[] achievements = new Achievement[5];
@@ -24,52 +26,48 @@ public  class AchievementInfo : MonoBehaviour
     private int[] amountAchieved = new int[] { 0, 0, 0, 0, 0 };
 
 
-    //Gets dataManager to get to access to save/load functions.
-    private void Awake()
-    {
-        dataManager = FindObjectOfType<DataManager>();
-    }
-
-    //Creates achievements + Sends event
-    private void Start()
-    {
-        SetAchievementMessage();
-        CreateAchievement();
-        SetAchievements();
-    }
-
     //Saves/Loads data on Disable/Enable
-    #region SAVE_LOAD_METHODS
+    #region LOAD_METHOD
 
     private void OnEnable()
     {
+        dataManager = new DataManager();
         LoadData();
     }
-
     private void OnDisable()
     {
         SaveData();
     }
-
-
     private void LoadData()
     {
-        GameData gd = dataManager.LoadData();
-        achievements = gd.AchievementsData;
+        if(dataManager.LoadData() == null)
+        {
+
+            SetAchievementMessage();
+            CreateAchievement();
+            SetAchievements();
+        }
+        if (dataManager.LoadData() != null)
+        {
+            GameData data = new GameData();
+            data = dataManager.LoadData();
+            achievements = data.achievements;
+            SetAchievements();
+        }
     }
 
     private void SaveData()
     {
         GameData data = new GameData();
-        data.AchievementsData = achievements;
+        data.achievements = achievements;
         dataManager.SaveData(data);
     }
-    #endregion SAVE_LOAD_FUNTIONS
+
+    #endregion LOAD_METHOD
 
     //Creates all the achievements in the array
     #region CREATES_ACHIEVEMENTS
 
-    // string data from xml and then for loop can be achieved.
     // Sets the message for all the achievements
     private void SetAchievementMessage()
     {
@@ -96,10 +94,15 @@ public  class AchievementInfo : MonoBehaviour
 
     public void SetAchievements()
     {
-        for (int i = 0; i < achievements.Length; i++)
-        {
-            CheckAchievement(i, achievements[i]);
-        }
+
+        CheckAchievement(0, achievements[0]);
+        CheckAchievement(1, achievements[1]);
+        CheckAchievement(2, achievements[2]);
+        CheckAchievement(3, achievements[3]);
+        CheckAchievement(4, achievements[4]);
+
+        print("Send all achievementbutton events");
+
     }
 
     private void CheckAchievement(int achievementNumber, Achievement achievement)
@@ -108,17 +111,11 @@ public  class AchievementInfo : MonoBehaviour
         args.AchievementNumber = achievementNumber;
         args.AnAchievement = achievement;
 
-        SetAchievementDataEvent(this, args);
+        SetAchievementDataEvent(args);
     }
 
     #endregion SET_ACHIEVEMENT_EVENT_FUNCTIONS
 
-    //Only here when statistics page is made.
-    //returns amountachieved data from specific achievement.
-    public int GetAchievementInfo(int achievementNr)
-    {
-        return achievements[achievementNr].AmountAchieved;
-    }
 
 
 

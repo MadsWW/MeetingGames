@@ -14,13 +14,13 @@ public class AchievementButton : MonoBehaviour {
 
     //GamObject Child Components
     private Text text;
-    private Image image;
+    //private Image image;
 
     private void Awake()
     {
         aInfo = FindObjectOfType<AchievementInfo>();
         text = GetComponentInChildren<Text>();
-        image = GetComponentInChildren<Image>();
+        //image = GetComponentInChildren<Image>();
 
     }
 
@@ -34,32 +34,39 @@ public class AchievementButton : MonoBehaviour {
         aInfo.SetAchievementDataEvent -= SetAchievement;
     }
 
-    private void SetAchievement(object sender, SetAchievementDataEventArgs e)
+    //Gets send an achievements and set this variable achievement
+    private void SetAchievement(SetAchievementDataEventArgs e)
     {
+        print("Achievement number: " + AchievementNumber + "  Incoming Number: " + e.AchievementNumber);
         if (AchievementNumber == e.AchievementNumber)
         {
             achievement = e.AnAchievement;
+            SetAchievementText();
             CheckForCompleted();
+
         }
     }
 
+    //Checks if the achievement is completed by checking if value achieved is equal or higher to value needed to complete
     private void CheckForCompleted()
     {
-        SetAchievementText();
-
-        if (achievement.AmountAchieved >= achievement.AmountToAchieve)
+        if (achievement.amountAchieved >= achievement.amountToAchieve)
         {
-            // if already unlock, no reward added;
-            //achievement.IsUnlocked = true;
-            //In Achievement for Set - GetType()  Achievementbutton;
-            //Add reward to coinamount - still has to be implemented
-            //Highlight if unlocked or something.
-           
+            if (!achievement.isUnlocked)
+            {
+                //achievement.isUnlocked = true;
+                //Add reward to coinamount - still has to be implemented
+            }
+            else //IsUnLocked
+            {
+                //Highlight if unlocked or something.
+            }
         }
     }
 
+    //Sets text element from gamobject
     private void SetAchievementText()
     {
-        text.text = string.Format("{0}\nProgress: {1} / {2}", achievement.Message, achievement.AmountAchieved, achievement.AmountToAchieve);
+        text.text = string.Format("{0}\nProgress: {1} / {2}", achievement.message, achievement.amountAchieved, achievement.amountToAchieve);
     }
 }

@@ -15,6 +15,6 @@ public class LevelSizeButton : MonoBehaviour {
         SetBoardSizeEventArgs BoardSizeArgs = new SetBoardSizeEventArgs();
         BoardSizeArgs.BoardHeight = height;
         BoardSizeArgs.BoardWidth = width;
-        BoardSize(gameObject, BoardSizeArgs);
+        BoardSize(BoardSizeArgs);
     }
 }

@@ -2,13 +2,13 @@
 
 //Rename File To Resemble what is inside it.
 
-public delegate void CheckCardDelegate(object sender, CheckCardEventArgs e);
-public delegate void SetBoardSizeDelegate(object sender, SetBoardSizeEventArgs e);
-public delegate void ChangeSetsTextDelegate(object sender, ChangeSetsTextEventArgs e);
-public delegate void ChangeTurnTextDelegate(object sender, ChangeTurnTextEventArgs e);
-public delegate void ChangeTimeTextDelegate(object sender, ChangeTimeTextEventArgs e);
-public delegate void SetAchievementDataDelegate(object sender, SetAchievementDataEventArgs e);
-public delegate void PushCardBackInfoDelegate(object sender, PushCardBackInfoEventArgs e);
+public delegate void CheckCardDelegate(CheckCardEventArgs e);
+public delegate void SetBoardSizeDelegate(SetBoardSizeEventArgs e);
+public delegate void ChangeSetsTextDelegate(ChangeSetsTextEventArgs e);
+public delegate void ChangeTurnTextDelegate(ChangeTurnTextEventArgs e);
+public delegate void ChangeTimeTextDelegate(ChangeTimeTextEventArgs e);
+public delegate void SetAchievementDataDelegate( SetAchievementDataEventArgs e);
+public delegate void PushCardBackInfoDelegate(PushCardBackInfoEventArgs e);
 
 
 

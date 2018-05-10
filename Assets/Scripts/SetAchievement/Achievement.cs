@@ -7,17 +7,11 @@ using UnityEngine.UI;
 [Serializable]
 public class Achievement
 {
-
-    // Make achievement from code instead of predefining them.
-    // Build same as ChangeCardSprites scripts.
-
-    // Variables set from achievementTracker
-
-    private int amountToAchieve;
-    private int amountAchieved;
-    private int cashReward;
-    private bool isUnlocked = false;
-    private string message;
+    public int amountToAchieve;
+    public int amountAchieved;
+    public int cashReward;
+    public bool isUnlocked = false;
+    public string message;
 
 
     //!!Work on naming the params, may cause confusion for outsider. 
@@ -28,46 +22,6 @@ public class Achievement
         cashReward = reward;
         isUnlocked = unlock;
         message = achievInfo;
-    }
-
-    public int AmountToAchieve
-    {
-        get
-        {
-            return amountToAchieve;
-        }
-    }
-
-    public int AmountAchieved
-    {
-        get
-        {
-            return amountAchieved;
-        }
-    }
-
-    public int CashReward
-    {
-        get
-        {
-            return cashReward;
-        }
-    }
-
-    public bool IsUnlocked
-    {
-        get
-        {
-            return isUnlocked;
-        }
-    }
-
-    public string Message
-    {
-        get
-        {
-            return message;
-        }
     }
 
 }

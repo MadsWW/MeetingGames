@@ -46,7 +46,7 @@ public class CardBackButton : MonoBehaviour {
     }
     
     //When PushCardBackInfoEvent is triggered
-    private void SetInfo(object sender, PushCardBackInfoEventArgs e)
+    private void SetInfo(PushCardBackInfoEventArgs e)
     {
         if (cardSpriteNumber == e.CardInfoNumber && cardType == e.TypeOfCard)
         {

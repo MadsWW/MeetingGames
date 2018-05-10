@@ -41,5 +41,6 @@ public class PushCardBackInfoEventArgs : EventArgs
     public int CardInfoNumber { get; set; }
     public CardType TypeOfCard { get; set; }
     public CardInfo CardBackInfo { get; set; }
-
 }
+
+

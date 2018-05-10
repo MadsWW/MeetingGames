@@ -52,7 +52,7 @@ public class CreateCardInfo : MonoBehaviour {
             args.CardBackInfo = CardBackInfo[i];
             args.TypeOfCard = CardType.CardBack;
             args.CardInfoNumber = i;
-            PushCardInfo(GetType(), args);
+            PushCardInfo(args);
         }
 
         for (int i = 0; i < CardFrontInfo.Length; i++)
@@ -61,7 +61,7 @@ public class CreateCardInfo : MonoBehaviour {
             args.CardBackInfo = CardFrontInfo[i];
             args.TypeOfCard = CardType.CardFront;
             args.CardInfoNumber = i;
-            PushCardInfo(GetType(), args);
+            PushCardInfo(args);
         }
     }
 

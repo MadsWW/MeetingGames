@@ -26,7 +26,6 @@ public class DeckBuilder : MonoBehaviour {
             _sprites.Add(_spriteCollection[randomNumber]);
             _sprites.Add(_spriteCollection[randomNumber]);
         }
-        print("Amount of Sprites: " + _sprites.Count);
         recurredNumbers.Clear();
     }
 
@@ -93,7 +92,6 @@ public class DeckBuilder : MonoBehaviour {
                 i++;
             }
         }
-        print("ReccuredNumber Count: " + recurredNumbers.Count);
     }
 
 
