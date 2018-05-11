@@ -7,6 +7,10 @@ public class UIController : MonoBehaviour
 {
     public RectTransform[] UIPanels;
 
+    private void Awake()
+    {
+        EnablePanel(UIPanels[0]);
+    }
 
     public void EnablePanel(RectTransform go)
     {
@@ -14,11 +18,25 @@ public class UIController : MonoBehaviour
         {
             if(gObject == go)
             {
-                gObject.gameObject.SetActive(true);
+                foreach(Image im in gObject.GetComponentsInChildren<Image>())
+                {
+                    im.enabled = true;
+                }
+                foreach (Text tx in gObject.GetComponentsInChildren<Text>())
+                {
+                    tx.enabled = true;
+                }
             }
             else
             {
-                gObject.gameObject.SetActive(false);
+                foreach (Image im in gObject.GetComponentsInChildren<Image>())
+                {
+                    im.enabled = false;
+                }
+                foreach (Text tx in gObject.GetComponentsInChildren<Text>())
+                {
+                    tx.enabled = false;
+                }
             }
         }
     }

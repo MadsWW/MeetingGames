@@ -45,8 +45,7 @@ public class GameManager : MonoBehaviour {
     LevelManager lManager;
     DataManager dManager;
 
-    //More understandable if divided into 5 seperate integers.
-    private Achievement[] achievements = new Achievement[5];
+    List<Achievement> achievements = new List<Achievement>();
 
    
     #region ENABLE_DISABLE_METHODS
@@ -116,14 +115,14 @@ public class GameManager : MonoBehaviour {
     //Passes amount of rows/cols/sets to DeckBuilder when the memory scene is loaded.
     private void LoadedScene(Scene scene, LoadSceneMode mode)
     {
-        LoadData();
+        
 
         bool memoryScene = scene.name == "Memory";
         bool scriptAvailable = FindObjectOfType<DeckBuilder>();
 
         if (memoryScene && scriptAvailable)
         {
-
+            LoadData();
 
             buildDeck = FindObjectOfType<DeckBuilder>();
 
@@ -163,17 +162,18 @@ public class GameManager : MonoBehaviour {
     {
         if (dManager.LoadData() != null)
         {
-            GameData data = dManager.LoadData();
-            achievements = data.achievements;
+            AchievementContainer data = dManager.LoadData();
+            achievements = data.Achievements;
         }
+        print(achievements.Count);
 
     }
 
     private void SaveData()
     {
-        GameData data = new GameData();
+        AchievementContainer data = new AchievementContainer();
 
-        data.achievements = achievements;
+        data.Achievements = achievements;
 
         dManager.SaveData(data);
     }
@@ -248,37 +248,37 @@ public class GameManager : MonoBehaviour {
 
     private int SetHighestTurnLeft()
     {
-        if(turnLeft > achievements[2].amountAchieved)
+        if(turnLeft > achievements[2].AmountAchieved)
         {
             return turnLeft;
         }
         else
         {
-            return achievements[2].amountAchieved;
+            return achievements[2].AmountAchieved;
         }
     }
 
     private int SetHighestTimeLeft()
     {
-        if(timeLeft > achievements[3].amountAchieved)
+        if(timeLeft > achievements[3].AmountAchieved)
         {
             return timeLeft;
         }
         else
         {
-            return achievements[3].amountAchieved;
+            return achievements[3].AmountAchieved;
         }
     }
 
     private int SetHighestTimeSurvived()
     {
-        if(timeSurvived > achievements[4].amountAchieved)
+        if(timeSurvived > achievements[4].AmountAchieved)
         {
             return timeSurvived;
         }
         else
         {
-            return achievements[4].amountAchieved;
+            return achievements[4].AmountAchieved;
         }
     }
 
@@ -303,16 +303,16 @@ public class GameManager : MonoBehaviour {
                 switch (gameMode)
                 {
                     case GameMode.Relax:
-                        achievements[0].amountAchieved++;
+                        achievements[0].AmountAchieved++;
                         Win();
                         break;
                     case GameMode.Turns:
-                        achievements[1].amountAchieved++;
-                        achievements[2].amountAchieved = SetHighestTurnLeft();
+                        achievements[1].AmountAchieved++;
+                        achievements[2].AmountAchieved = SetHighestTurnLeft();
                         Win();
                         break;
                     case GameMode.Time:
-                        achievements[3].amountAchieved = SetHighestTimeLeft();
+                        achievements[3].AmountAchieved = SetHighestTimeLeft();
                         Win();
                         break;
                 }
@@ -344,7 +344,7 @@ public class GameManager : MonoBehaviour {
         {
             if (gameMode == GameMode.Endless)
             {
-                achievements[4].amountAchieved = SetHighestTimeSurvived();
+                achievements[4].AmountAchieved = SetHighestTimeSurvived();
             }
 
             CancelInvoke("CheckTimeLeft");

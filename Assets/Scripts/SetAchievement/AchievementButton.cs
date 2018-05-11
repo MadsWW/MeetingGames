@@ -16,16 +16,12 @@ public class AchievementButton : MonoBehaviour {
     private Text text;
     //private Image image;
 
-    private void Awake()
+    private void OnEnable()
     {
         aInfo = FindObjectOfType<AchievementInfo>();
         text = GetComponentInChildren<Text>();
+        print(gameObject.name + " Text avialable " + text);
         //image = GetComponentInChildren<Image>();
-
-    }
-
-    private void OnEnable()
-    {
         aInfo.SetAchievementDataEvent += SetAchievement;
     }
 
@@ -37,22 +33,20 @@ public class AchievementButton : MonoBehaviour {
     //Gets send an achievements and set this variable achievement
     private void SetAchievement(SetAchievementDataEventArgs e)
     {
-        print("Achievement number: " + AchievementNumber + "  Incoming Number: " + e.AchievementNumber);
         if (AchievementNumber == e.AchievementNumber)
         {
             achievement = e.AnAchievement;
             SetAchievementText();
-            CheckForCompleted();
-
+            //CheckForCompleted();
         }
     }
 
     //Checks if the achievement is completed by checking if value achieved is equal or higher to value needed to complete
     private void CheckForCompleted()
     {
-        if (achievement.amountAchieved >= achievement.amountToAchieve)
+        if (achievement.AmountAchieved >= achievement.AmountToAchieve)
         {
-            if (!achievement.isUnlocked)
+            if (!achievement.IsUnlocked)
             {
                 //achievement.isUnlocked = true;
                 //Add reward to coinamount - still has to be implemented
@@ -67,6 +61,6 @@ public class AchievementButton : MonoBehaviour {
     //Sets text element from gamobject
     private void SetAchievementText()
     {
-        text.text = string.Format("{0}\nProgress: {1} / {2}", achievement.message, achievement.amountAchieved, achievement.amountToAchieve);
+        text.text = string.Format("{0}\nProgress: {1} / {2}", achievement.Message, achievement.AmountAchieved, achievement.AmountToAchieve);
     }
 }

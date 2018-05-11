@@ -1,27 +1,22 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+using System.Xml;
+using System.Xml.Serialization;
 
-[Serializable]
 public class Achievement
 {
-    public int amountToAchieve;
-    public int amountAchieved;
-    public int cashReward;
-    public bool isUnlocked = false;
-    public string message;
+    public int AmountToAchieve;
+    public int AmountAchieved;
+    public int CashReward;
+    public bool IsUnlocked;
+    public string Message;
 
-
-    //!!Work on naming the params, may cause confusion for outsider. 
-    public Achievement(int achieveAmount, int achievedAmount, int reward, bool unlock, string achievInfo)
+    public Achievement()
     {
-        amountToAchieve = achieveAmount;
-        amountAchieved = achievedAmount;
-        cashReward = reward;
-        isUnlocked = unlock;
-        message = achievInfo;
+        AmountToAchieve = 1;
+        AmountAchieved = 1;
+        CashReward = 1;
+        IsUnlocked = false;
+        Message = "non message";
     }
 
 }

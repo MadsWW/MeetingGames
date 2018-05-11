@@ -15,7 +15,7 @@ public  class AchievementInfo : MonoBehaviour
 
 
     //Needs to be saved.
-    private Achievement[] achievements = new Achievement[5];
+    private List<Achievement> achievements = new List<Achievement>();
 
     // For creating new achievements.
     private bool[] achievementUnlocked = new bool[5];
@@ -42,24 +42,23 @@ public  class AchievementInfo : MonoBehaviour
     {
         if(dataManager.LoadData() == null)
         {
-
             SetAchievementMessage();
             CreateAchievement();
-            SetAchievements();
         }
-        if (dataManager.LoadData() != null)
+        else if (dataManager.LoadData() != null)
         {
-            GameData data = new GameData();
+            AchievementContainer data = new AchievementContainer();
             data = dataManager.LoadData();
-            achievements = data.achievements;
-            SetAchievements();
+            achievements = data.Achievements;
+
         }
+        //SetAchievements();
     }
 
     private void SaveData()
     {
-        GameData data = new GameData();
-        data.achievements = achievements;
+        AchievementContainer data = new AchievementContainer();
+        data.Achievements = achievements;
         dataManager.SaveData(data);
     }
 
@@ -81,9 +80,16 @@ public  class AchievementInfo : MonoBehaviour
     //Creates all achievements 
     private void CreateAchievement()
     {
-        for (int i = 0; i < achievements.Length; i++)
+        for (int i = 0; i < achievementMessage.Length; i++)
         {
-            achievements[i] = new Achievement(amountToUnlock[i], amountAchieved[i], reward[i], achievementUnlocked[i], achievementMessage[i]);
+            Achievement achievement = new Achievement();
+            achievement.AmountAchieved = amountAchieved[i];
+            achievement.AmountToAchieve = amountToUnlock[i];
+            achievement.CashReward = reward[i];
+            achievement.IsUnlocked = achievementUnlocked[i];
+            achievement.Message = achievementMessage[i];
+
+            achievements.Add(achievement);
         }
     }
 
@@ -94,15 +100,11 @@ public  class AchievementInfo : MonoBehaviour
 
     public void SetAchievements()
     {
-
         CheckAchievement(0, achievements[0]);
         CheckAchievement(1, achievements[1]);
         CheckAchievement(2, achievements[2]);
         CheckAchievement(3, achievements[3]);
         CheckAchievement(4, achievements[4]);
-
-        print("Send all achievementbutton events");
-
     }
 
     private void CheckAchievement(int achievementNumber, Achievement achievement)
