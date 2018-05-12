@@ -3,8 +3,10 @@ using UnityEngine;
 using System.Xml.Serialization;
 
 
-// Make MonoBehaviour and set data from event.
-// Make it so that the functions can take generic type T
+
+// Save/Load should take and return generic type T (include string param) for datapath
+// Should be MonoBehaviour so there cant be new DataManager class generated;
+// SetData from events, so only specific classes can access methods.
 public class DataManager{
 
 
@@ -25,6 +27,32 @@ public class DataManager{
             XmlSerializer serializer = new XmlSerializer(typeof(AchievementContainer));
             FileStream filestream = File.Open(Application.persistentDataPath + "/gamedata.dat", FileMode.Open);
             AchievementContainer data = serializer.Deserialize(filestream) as AchievementContainer;
+            filestream.Close();
+            return data;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public void SaveCardInfo(CardInfoContainer data)
+    {
+        XmlSerializer serializer = new XmlSerializer(typeof(CardInfoContainer));
+        FileStream filestream = File.Create(Application.persistentDataPath + "/cardinfo.dat"); // replace hardcoded file to string.
+
+        serializer.Serialize(filestream, data);
+        filestream.Close();
+
+    }
+
+    public CardInfoContainer LoadCardInfo()
+    {
+        if (File.Exists(Application.persistentDataPath + "/cardinfo.dat"))
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(CardInfoContainer));
+            FileStream filestream = File.Open(Application.persistentDataPath + "/cardinfo.dat", FileMode.Open);
+            CardInfoContainer data = serializer.Deserialize(filestream) as CardInfoContainer;
             filestream.Close();
             return data;
         }

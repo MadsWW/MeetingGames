@@ -5,12 +5,19 @@ using UnityEngine.UI;
 
 public class AchievementButton : MonoBehaviour {
 
+    public static event SetAchievementOnCompletedDelegate SetAchievementOnCompletedEvent;
+    public static event PayOutOnCompletedDelegate PayOutOnCompletedEvent;
+
+    //private go variable
     private Achievement achievement;
+
+    //public go variable
+    public int AchievementNumber;
 
     //GameObject Needed for event trigger.
     private AchievementInfo aInfo;
 
-    public int AchievementNumber;
+
 
     //GamObject Child Components
     private Text text;
@@ -20,7 +27,6 @@ public class AchievementButton : MonoBehaviour {
     {
         aInfo = FindObjectOfType<AchievementInfo>();
         text = GetComponentInChildren<Text>();
-        print(gameObject.name + " Text avialable " + text);
         //image = GetComponentInChildren<Image>();
         aInfo.SetAchievementDataEvent += SetAchievement;
     }
@@ -37,7 +43,7 @@ public class AchievementButton : MonoBehaviour {
         {
             achievement = e.AnAchievement;
             SetAchievementText();
-            //CheckForCompleted();
+            CheckForCompleted();
         }
     }
 
@@ -48,14 +54,31 @@ public class AchievementButton : MonoBehaviour {
         {
             if (!achievement.IsUnlocked)
             {
-                //achievement.isUnlocked = true;
-                //Add reward to coinamount - still has to be implemented
+                achievement.IsUnlocked = true;
+                achievement.Message = "Completed!";
+                SendOnCompleted();
+                PayOut();
             }
             else //IsUnLocked
             {
                 //Highlight if unlocked or something.
             }
         }
+    }
+
+    private void SendOnCompleted()
+    {
+        SetAchievementOnCompletedEventArgs args = new SetAchievementOnCompletedEventArgs();
+        args.achievementNumber = AchievementNumber;
+        args.achievement = achievement;
+        SetAchievementOnCompletedEvent(args);
+    }
+
+    private void PayOut()
+    {
+        PayOutOnCompletedEventArgs args = new PayOutOnCompletedEventArgs();
+        args.Reward = achievement.CashReward;
+        PayOutOnCompletedEvent(args);
     }
 
     //Sets text element from gamobject

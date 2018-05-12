@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     public RectTransform[] UIPanels;
+    public Text CoinText;
 
     private void Awake()
     {

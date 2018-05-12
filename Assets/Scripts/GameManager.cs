@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public enum GameMode { Relax, Turns, Time, Endless }
@@ -36,7 +37,7 @@ public class GameManager : MonoBehaviour {
 
     //Start values for gamemodes
     private int turnLeft = 30;
-    private int timeLeft = 100;
+    private int timeLeft = 60;
     private int timeSurvived = 0;
 
     //Classes needed for methods
@@ -44,8 +45,11 @@ public class GameManager : MonoBehaviour {
     AchievementInfo aInfo;
     LevelManager lManager;
     DataManager dManager;
+    UIController uiControl;
 
     List<Achievement> achievements = new List<Achievement>();
+
+    private int coins = 100;
 
    
     #region ENABLE_DISABLE_METHODS
@@ -66,6 +70,8 @@ public class GameManager : MonoBehaviour {
         dManager = new DataManager();
 
 
+
+
     }
 
     //Add to events
@@ -73,6 +79,7 @@ public class GameManager : MonoBehaviour {
     {
         LevelSizeButton.BoardSize += SetupGame;
         SceneManager.sceneLoaded += LoadedScene;
+        AchievementButton.PayOutOnCompletedEvent += AddReward;
         CardBehaviour.CheckCard += CheckCorrectCall;
 	}
 
@@ -81,6 +88,7 @@ public class GameManager : MonoBehaviour {
     {
         LevelSizeButton.BoardSize -= SetupGame;
         SceneManager.sceneLoaded -= LoadedScene;
+        AchievementButton.PayOutOnCompletedEvent -= AddReward;
         CardBehaviour.CheckCard -= CheckCorrectCall;
     }
 
@@ -92,6 +100,46 @@ public class GameManager : MonoBehaviour {
         gameMode = mode;
     }
 
+    public int Coins
+    {
+        get
+        {
+            return coins;
+        }
+    }
+
+    public void SetCoins(GameObject go, int loadedcoins)
+    {
+        if (go.GetComponent<AchievementInfo>())
+        {
+            coins = loadedcoins;
+        }
+    }
+    public bool CheckEnoughCoins(int cost)
+    {
+        // Else money could be added if cost negative.
+        if(cost < 0)
+        {
+            return false;
+        }
+        else if(cost <= coins)
+        {
+            coins -= cost;
+            SetCoinText();
+            return true;
+        }
+        else
+        {
+            return false;
+            // Could show message: not enough coins to buy.
+        }
+    }
+
+    private void AddReward(PayOutOnCompletedEventArgs args)
+    {
+        coins += args.Reward;
+        SetCoinText();
+    }
 
     #region BOARD_SIZE_EVENT_METHODS
     //Sets rows/cols depending on menu button input.
@@ -115,7 +163,7 @@ public class GameManager : MonoBehaviour {
     //Passes amount of rows/cols/sets to DeckBuilder when the memory scene is loaded.
     private void LoadedScene(Scene scene, LoadSceneMode mode)
     {
-        
+
 
         bool memoryScene = scene.name == "Memory";
         bool scriptAvailable = FindObjectOfType<DeckBuilder>();
@@ -156,6 +204,10 @@ public class GameManager : MonoBehaviour {
                     throw new InvalidEnumArgumentException("An invalid game mode has been chosen");
             }
         }
+        else
+        {
+            SetCoinText();
+        }
     }
 
     private void LoadData()
@@ -164,9 +216,12 @@ public class GameManager : MonoBehaviour {
         {
             AchievementContainer data = dManager.LoadData();
             achievements = data.Achievements;
+            coins = data.Coins;
         }
-        print(achievements.Count);
-
+        else
+        {
+            throw new ArgumentNullException("No Data for the GameManager to grab!");
+        }
     }
 
     private void SaveData()
@@ -174,6 +229,7 @@ public class GameManager : MonoBehaviour {
         AchievementContainer data = new AchievementContainer();
 
         data.Achievements = achievements;
+        data.Coins = coins;
 
         dManager.SaveData(data);
     }
@@ -242,6 +298,12 @@ public class GameManager : MonoBehaviour {
         ChangeTimeLeft(args);
     }
 
+    private void SetCoinText()
+    {
+        uiControl = FindObjectOfType<UIController>();
+        uiControl.CoinText.text = coins.ToString() + " Coins";
+    }
+
     #endregion SET_TEXT_FUNCTIONS
 
     #region SET_HIGHEST_ACHIEVED_METHODS
@@ -304,14 +366,17 @@ public class GameManager : MonoBehaviour {
                 {
                     case GameMode.Relax:
                         achievements[0].AmountAchieved++;
+                        coins += 10;
                         Win();
                         break;
                     case GameMode.Turns:
+                        coins += 25;
                         achievements[1].AmountAchieved++;
                         achievements[2].AmountAchieved = SetHighestTurnLeft();
                         Win();
                         break;
                     case GameMode.Time:
+                        coins += 25;
                         achievements[3].AmountAchieved = SetHighestTimeLeft();
                         Win();
                         break;
@@ -345,9 +410,9 @@ public class GameManager : MonoBehaviour {
             if (gameMode == GameMode.Endless)
             {
                 achievements[4].AmountAchieved = SetHighestTimeSurvived();
+                coins += 25; // get more when more rounds won.
             }
 
-            CancelInvoke("CheckTimeLeft");
             Lose();
         }
     }
@@ -379,6 +444,7 @@ public class GameManager : MonoBehaviour {
     private void Lose()
     {
         SaveData();
+        CancelInvoke("CheckTimeLeft");
         //Whatever happens when the player loses the round.
         lManager.LoadScene("Menu");
     }

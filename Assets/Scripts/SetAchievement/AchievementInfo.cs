@@ -12,6 +12,7 @@ public  class AchievementInfo : MonoBehaviour
 
     // Class to save data.
     private DataManager dataManager;
+    private GameManager gManager;
 
 
     //Needs to be saved.
@@ -22,7 +23,7 @@ public  class AchievementInfo : MonoBehaviour
     private string[] achievementMessage = new string[5];
     public Sprite[] AchievementSprites = new Sprite[5];
     private int[] amountToUnlock = new int[] { 10, 10, 10, 20, 200 };
-    private int[] reward = new int[] { 25, 25, 25, 50, 100 };
+    private int[] reward = new int[] { 100, 100, 200, 200, 300 };
     private int[] amountAchieved = new int[] { 0, 0, 0, 0, 0 };
 
 
@@ -32,10 +33,13 @@ public  class AchievementInfo : MonoBehaviour
     private void OnEnable()
     {
         dataManager = new DataManager();
+        gManager = FindObjectOfType<GameManager>();
+        AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
         LoadData();
     }
     private void OnDisable()
     {
+        AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
         SaveData();
     }
     private void LoadData()
@@ -49,16 +53,17 @@ public  class AchievementInfo : MonoBehaviour
         {
             AchievementContainer data = new AchievementContainer();
             data = dataManager.LoadData();
+            gManager.SetCoins(gameObject, data.Coins);
             achievements = data.Achievements;
-
+            
         }
-        //SetAchievements();
     }
 
     private void SaveData()
     {
         AchievementContainer data = new AchievementContainer();
         data.Achievements = achievements;
+        data.Coins = gManager.Coins;
         dataManager.SaveData(data);
     }
 
@@ -118,7 +123,11 @@ public  class AchievementInfo : MonoBehaviour
 
     #endregion SET_ACHIEVEMENT_EVENT_FUNCTIONS
 
-
+    //Sets the achievement in the achievement list when one is completed.
+    private void OnAchievementCompleted(SetAchievementOnCompletedEventArgs e)
+    {
+        achievements[e.achievementNumber] = e.achievement;
+    }
 
 
 

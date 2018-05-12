@@ -1,6 +1,6 @@
 ﻿using System;
+using UnityEngine;
 
-//Rename File To Resemble what is inside it.
 
 public class CheckCardEventArgs : EventArgs
 {
@@ -38,9 +38,25 @@ public class SetAchievementDataEventArgs: EventArgs
 
 public class PushCardBackInfoEventArgs : EventArgs
 {
-    public int CardInfoNumber { get; set; }
-    public CardType TypeOfCard { get; set; }
-    public CardInfo CardBackInfo { get; set; }
+    public Sprite CardSprite { get; set; }
+    public CardInfo Card { get; set; }
+}
+
+public class SetCardInfoUnlockedEventArgs : EventArgs
+{
+    public int cardNumber { get; set; }
+    public CardInfo Card { get; set; }
+}
+
+public class SetAchievementOnCompletedEventArgs : EventArgs
+{
+    public int achievementNumber { get; set; }
+    public Achievement achievement { get; set; }
+}
+
+public class PayOutOnCompletedEventArgs : EventArgs
+{
+    public int Reward { get; set; }
 }
 
 

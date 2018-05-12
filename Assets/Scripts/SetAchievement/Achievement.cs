@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
-
+// Make into get properties
 public class Achievement
 {
     public int AmountToAchieve;

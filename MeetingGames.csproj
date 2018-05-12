@@ -224,17 +224,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\AchievementContainer.cs" />
     <Compile Include="Assets\Scripts\ButtonScripts\GameModeButton.cs" />
     <Compile Include="Assets\Scripts\ButtonScripts\LevelSizeButton.cs" />
     <Compile Include="Assets\Scripts\CardBehaviour.cs" />
-    <Compile Include="Assets\Scripts\ChangeCardSprites\CardBackButton.cs" />
+    <Compile Include="Assets\Scripts\ChangeCardSprites\CardInfoButton.cs" />
     <Compile Include="Assets\Scripts\ChangeCardSprites\CardInfo.cs" />
+    <Compile Include="Assets\Scripts\ChangeCardSprites\CardInfoContainer.cs" />
     <Compile Include="Assets\Scripts\ChangeCardSprites\CreateCardInfo.cs" />
     <Compile Include="Assets\Scripts\DataManager.cs" />
     <Compile Include="Assets\Scripts\DeckBuilder.cs" />
     <Compile Include="Assets\Scripts\Delegates.cs" />
     <Compile Include="Assets\Scripts\EventArgs.cs" />
-    <Compile Include="Assets\Scripts\AchievementContainer.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\LevelManager.cs" />
     <Compile Include="Assets\Scripts\SetAchievement\Achievement.cs" />

@@ -6,62 +6,120 @@ public class CreateCardInfo : MonoBehaviour {
 
     public event PushCardBackInfoDelegate PushCardInfo;
 
-    private CardInfo[] CardBackInfo = new CardInfo[5];
-    private bool[] CardBackUnlocked = new bool[5];
-    private CardInfo[] CardFrontInfo = new CardInfo[5];
-    private bool[] CardFrontUnlocked = new bool[5];
+    private List<CardInfo> cardBackInfo = new List<CardInfo>();
+    private bool[] cardBackUnlocked = new bool[5];
+    private int[] cardBackCosts = new int[] { 100, 200, 400, 400, 1000 };
+    public Sprite[] cardBacksSprite;
 
-    public Sprite[] CardBacksSprite;
-    public Sprite[] CardFrontSprite;
+    private List<CardInfo> cardFrontInfo = new List<CardInfo>();
+    private bool[] cardFrontUnlocked = new bool[5];
+    private int[] cardFrontCosts = new int[] { 100, 200, 400, 400, 1000 };
+    public Sprite[] cardFrontSprite;
 
 
+    DataManager dManager;
 
-	// Use this for initialization
-	void Start ()
+    private void OnEnable()
     {
-        CreatCardBack();
-        CreateCardFront();
-        SendCardInfo();
+        dManager = new DataManager();
+        CardInfoButton.SetCardInfoEvent += GetCardInfoFromButton;
+        LoadData();
     }
+
+    private void OnDisable()
+    {
+        CardInfoButton.SetCardInfoEvent += GetCardInfoFromButton;
+        SaveData();
+    }
+
+    private void LoadData()
+    {
+        if (dManager.LoadCardInfo() == null)
+        {
+            CreatCardBack();
+            CreateCardFront();
+        }
+        else if (dManager.LoadCardInfo() != null)
+        {
+            CardInfoContainer data = dManager.LoadCardInfo();
+            cardBackInfo = data.CardBackInfo;
+            cardFrontInfo = data.CardFrontInfo;
+        }
+    }
+
+    private void SaveData()
+    {
+        CardInfoContainer data = new CardInfoContainer();
+        data.CardBackInfo = cardBackInfo;
+        data.CardFrontInfo = cardFrontInfo;
+        dManager.SaveCardInfo(data);
+    }
+
+
+    //Creates the data if there is non.
+    #region CREATE_CARDINFO_DATA
 
     private void CreatCardBack()
     {
-        CardBackInfo[0] = new CardInfo(100, CardBackUnlocked[0], CardBacksSprite[0], CardType.CardBack);
-        CardBackInfo[1] = new CardInfo(200, CardBackUnlocked[1], CardBacksSprite[1], CardType.CardBack);
-        CardBackInfo[2] = new CardInfo(400, CardBackUnlocked[2], CardBacksSprite[2], CardType.CardBack);
-        CardBackInfo[3] = new CardInfo(400, CardBackUnlocked[3], CardBacksSprite[3], CardType.CardBack);
-        CardBackInfo[4] = new CardInfo(1000, CardBackUnlocked[4], CardBacksSprite[4], CardType.CardBack);
+        for(int i = 0; i < cardBackUnlocked.Length; i++)
+        {
+            CardInfo info = new CardInfo();
+            info.spriteNumber = i;
+            info.price = cardBackCosts[i];
+            info.isUnlocked = cardBackUnlocked[i];
+            info.typeOfCard = CardType.CardBack;
+
+            cardBackInfo.Add(info);
+        }
     }
 
     private void CreateCardFront()
     {
-        CardFrontInfo[0] = new CardInfo(100, CardFrontUnlocked[0], CardFrontSprite[0], CardType.CardFront);
-        CardFrontInfo[1] = new CardInfo(200, CardFrontUnlocked[1], CardFrontSprite[1], CardType.CardFront);
-        CardFrontInfo[2] = new CardInfo(400, CardFrontUnlocked[2], CardFrontSprite[2], CardType.CardFront);
-        CardFrontInfo[3] = new CardInfo(400, CardFrontUnlocked[3], CardFrontSprite[3], CardType.CardFront);
-        CardFrontInfo[4] = new CardInfo(1000, CardFrontUnlocked[4], CardFrontSprite[4], CardType.CardFront);
+        for (int i = 0; i < cardFrontUnlocked.Length; i++)
+        {
+            CardInfo info = new CardInfo();
+            info.spriteNumber = i;
+            info.price = cardFrontCosts[i];
+            info.isUnlocked = cardFrontUnlocked[i];
+            info.typeOfCard = CardType.CardFront;
+
+            cardFrontInfo.Add(info);
+        }
     }
 
-    //Sends Events Card'Back'Button
-    // !!! Sends CardInfo * CardInfo (10 x 10 = 100) amount of events, can done be better??
-    private void SendCardInfo()
+    #endregion CREATE_CARDINFO_DATA
+
+
+    //Sends on buttonpress from menu.
+    // !!! Sends CardInfo * CardInfo (10 x 10 = 100) amount of events, can done be better?? More custom events?
+    public void SendCardInfo()
     {
-        for( int i = 0; i < CardBackInfo.Length; i++)
+        for( int i = 0; i < cardBackInfo.Count; i++)
         {
             PushCardBackInfoEventArgs args = new PushCardBackInfoEventArgs();
-            args.CardBackInfo = CardBackInfo[i];
-            args.TypeOfCard = CardType.CardBack;
-            args.CardInfoNumber = i;
+            args.Card = cardBackInfo[i];
+            args.CardSprite = cardBacksSprite[i];
             PushCardInfo(args);
         }
 
-        for (int i = 0; i < CardFrontInfo.Length; i++)
+        for (int i = 0; i < cardFrontInfo.Count; i++)
         {
             PushCardBackInfoEventArgs args = new PushCardBackInfoEventArgs();
-            args.CardBackInfo = CardFrontInfo[i];
-            args.TypeOfCard = CardType.CardFront;
-            args.CardInfoNumber = i;
+            args.Card = cardFrontInfo[i];
+            args.CardSprite = cardFrontSprite[i];
             PushCardInfo(args);
+        }
+    }
+
+    private void GetCardInfoFromButton(SetCardInfoUnlockedEventArgs e)
+    {
+        if(e.Card.typeOfCard == CardType.CardBack)
+        {
+            cardBackInfo[e.cardNumber] = e.Card;
+        }
+        else if( e.Card.typeOfCard == CardType.CardFront)
+        {
+            cardFrontInfo[e.cardNumber] = e.Card;
         }
     }
 
