@@ -25,9 +25,9 @@ public class GameManager : MonoBehaviour {
     private static GameManager gManager = null;
 
     //Will be set from menu buttons if necessairy
-    private int rows = 2;
-    private int cols = 1;
-    private int amountOfSets = 1;
+    private int rows = 6;
+    private int cols = 4;
+    private int amountOfSets = 12;
     private int correctSets;
 
     //Card Front Sprites

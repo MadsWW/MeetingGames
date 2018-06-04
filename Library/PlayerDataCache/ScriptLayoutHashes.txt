@@ -12,7 +12,7 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 6af7378a45ad6da4992a71ef50ddc2eb UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 af723155c251fcfa0e66530a75f3ea4c UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.LevelManager
-d574e0e8b2d28f1cbdf62780f022f3d7 Assembly-CSharp.dll:.CreateCardInfo
+d8d8f667e72025824345bafd5d927bf9 Assembly-CSharp.dll:.CreateCardInfo
 1b1d48dd42437cb1dbdd0733dac5e96a Assembly-CSharp.dll:.GameModeButton
 a35dc9cca2faebc5f5f1aeb9e8e47bbe UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.UI.dll:UnityEngine.EventSystems.BaseInput
@@ -171,9 +171,9 @@ a9e1c36c671666e79706791e556d5100 Vuforia.UnityExtensions.dll:Vuforia.VuMarkBehav
 3d1b89310e77c34bc0c8d7132231345c Vuforia.UnityExtensions.dll:Vuforia.WireframeBehaviour
 05524b8f659e7bfe5756d1335fec24ba Vuforia.UnityExtensions.dll:Vuforia.WireframeTrackableEventHandler
 15bea26698002c6c4a3087131232ce5c Vuforia.UnityExtensions.dll:Vuforia.WordBehaviour
-cd261931a8218c2379598bd793573e68 Assembly-CSharp.dll:.CardBackButton
+cd261931a8218c2379598bd793573e68 Assembly-CSharp.dll:.CardInfoButton
 ce0cb35cbdc6213ab1cc853a31496730 Assembly-CSharp.dll:.TextManager
-70d724745e354b5e62790a8ec9801e43 Assembly-CSharp.dll:.UIController
+105b4fd57cb5c42c723f1b27b78d2bc6 Assembly-CSharp.dll:.UIController
 01f6b1ba9212feb51525cdd342ac6d2d Assembly-CSharp.dll:.DeckBuilder
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
