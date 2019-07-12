@@ -9,16 +9,10 @@ public  class AchievementInfo : MonoBehaviour
     //Event that sets achievement data
     public event SetAchievementDataDelegate SetAchievementDataEvent;
 
-
-    // Class to save data.
-    private DataManager dataManager;
-    private GameManager gManager;
-
-
     //Needs to be saved.
-    private List<Achievement> achievements = new List<Achievement>();
+    private List<Achievement> _achievements = new List<Achievement>();
 
-    // For creating new achievements.
+    // For creating new achievements. //TODO Make XML of the achievements instead of Harcoded
     private bool[] achievementUnlocked = new bool[5];
     private string[] achievementMessage = new string[5];
     public Sprite[] AchievementSprites = new Sprite[5];
@@ -26,61 +20,36 @@ public  class AchievementInfo : MonoBehaviour
     private int[] reward = new int[] { 100, 100, 200, 200, 300 };
     private int[] amountAchieved = new int[] { 0, 0, 0, 0, 0 };
 
+    public List<Achievement> Achievements { get { return _achievements; } }
 
-    //Saves/Loads data on Disable/Enable
-    #region LOAD_METHOD
+    private void Awake()
+    {
+        LoadAchievements();
+    }
+
+    private void LoadAchievements()
+    {
+        if (DataManager.LoadData() == null)
+        {
+            CreateAchievement();
+        }
+        else
+        {
+            _achievements = DataManager.LoadData().Achievements;
+        }
+    }
 
     private void OnEnable()
     {
-        dataManager = new DataManager();
-        gManager = FindObjectOfType<GameManager>();
         AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
-        LoadData();
     }
     private void OnDisable()
     {
-        AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
-        SaveData();
+        AchievementButton.SetAchievementOnCompletedEvent -= OnAchievementCompleted;
     }
-    private void LoadData()
-    {
-        if(dataManager.LoadData() == null)
-        {
-            SetAchievementMessage();
-            CreateAchievement();
-        }
-        else if (dataManager.LoadData() != null)
-        {
-            AchievementContainer data = new AchievementContainer();
-            data = dataManager.LoadData();
-            gManager.SetCoins(gameObject, data.Coins);
-            achievements = data.Achievements;
-            
-        }
-    }
-
-    private void SaveData()
-    {
-        AchievementContainer data = new AchievementContainer();
-        data.Achievements = achievements;
-        data.Coins = gManager.Coins;
-        dataManager.SaveData(data);
-    }
-
-    #endregion LOAD_METHOD
 
     //Creates all the achievements in the array
     #region CREATES_ACHIEVEMENTS
-
-    // Sets the message for all the achievements
-    private void SetAchievementMessage()
-    {
-        achievementMessage[0] = string.Format("Win {0} Relax Mode Games", amountToUnlock[0]);
-        achievementMessage[1] = string.Format("Win {0} Turn Mode Games", amountToUnlock[1]);
-        achievementMessage[2] = string.Format("Win with {0} Turns Left", amountToUnlock[2]);
-        achievementMessage[3] = string.Format("Win with {0} Seconds Left", amountToUnlock[3]);
-        achievementMessage[4] = string.Format("Survive for {0} Seconds.", amountToUnlock[4]);
-    }
 
     //Creates all achievements 
     private void CreateAchievement()
@@ -94,8 +63,19 @@ public  class AchievementInfo : MonoBehaviour
             achievement.IsUnlocked = achievementUnlocked[i];
             achievement.Message = achievementMessage[i];
 
-            achievements.Add(achievement);
+            _achievements.Add(achievement);
         }
+        SetAchievementMessage();
+    }
+
+    // Sets the message for all the achievements
+    private void SetAchievementMessage()
+    {
+        achievementMessage[0] = string.Format("Win {0} Relax Mode Games", amountToUnlock[0]);
+        achievementMessage[1] = string.Format("Win {0} Turn Mode Games", amountToUnlock[1]);
+        achievementMessage[2] = string.Format("Win with {0} Turns Left", amountToUnlock[2]);
+        achievementMessage[3] = string.Format("Win with {0} Seconds Left", amountToUnlock[3]);
+        achievementMessage[4] = string.Format("Survive for {0} Seconds.", amountToUnlock[4]);
     }
 
     #endregion CREATES_ACHIEVEMENTS
@@ -105,11 +85,11 @@ public  class AchievementInfo : MonoBehaviour
 
     public void SetAchievements()
     {
-        CheckAchievement(0, achievements[0]);
-        CheckAchievement(1, achievements[1]);
-        CheckAchievement(2, achievements[2]);
-        CheckAchievement(3, achievements[3]);
-        CheckAchievement(4, achievements[4]);
+        CheckAchievement(0, _achievements[0]);
+        CheckAchievement(1, _achievements[1]);
+        CheckAchievement(2, _achievements[2]);
+        CheckAchievement(3, _achievements[3]);
+        CheckAchievement(4, _achievements[4]);
     }
 
     private void CheckAchievement(int achievementNumber, Achievement achievement)
@@ -126,7 +106,7 @@ public  class AchievementInfo : MonoBehaviour
     //Sets the achievement in the achievement list when one is completed.
     private void OnAchievementCompleted(SetAchievementOnCompletedEventArgs e)
     {
-        achievements[e.achievementNumber] = e.achievement;
+        _achievements[e.achievementNumber] = e.achievement;
     }
 
 

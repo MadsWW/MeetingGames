@@ -1,6 +1,5 @@
 ﻿using System;
 
-
 public delegate void CheckCardDelegate(CheckCardEventArgs e);
 public delegate void SetBoardSizeDelegate(SetBoardSizeEventArgs e);
 public delegate void ChangeSetsTextDelegate(ChangeSetsTextEventArgs e);

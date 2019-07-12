@@ -1,9 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public enum GameMode { Relax, Turns, Time, Endless }
@@ -31,9 +29,9 @@ public class GameManager : MonoBehaviour {
     private int correctSets;
 
     //Card Front Sprites
-    public Sprite[] CardDeck;
+    [SerializeField] private Sprite[] _cardDeck;
     //Card Back Sprite
-    public Sprite CardBack;
+    [SerializeField] private Sprite _cardBack;
 
     //Start values for gamemodes
     private int turnLeft = 30;
@@ -41,20 +39,44 @@ public class GameManager : MonoBehaviour {
     private int timeSurvived = 0;
 
     //Classes needed for methods
-    DeckBuilder buildDeck;
-    AchievementInfo aInfo;
-    LevelManager lManager;
-    DataManager dManager;
-    UIController uiControl;
-
-    List<Achievement> achievements = new List<Achievement>();
+    private DeckBuilder _deckBuilder;
+    private LevelManager _levelManager;
+    private UIController _uiController;
+    private AchievementInfo _achievementInfo;
 
     private int coins = 100;
+    public int Coins { get { return coins; }}
 
-   
-    #region ENABLE_DISABLE_METHODS
-    //Dont Destroy Object.
+
     private void Awake()
+    {
+        Singleton();
+
+        _levelManager = FindObjectOfType<LevelManager>();
+        _achievementInfo = FindObjectOfType<AchievementInfo>();
+    }
+
+    #region EVENT_SUBSCRIPTION
+
+    private void OnEnable ()
+    {
+        LevelSizeButton.BoardSize += SetupGame;
+        SceneManager.sceneLoaded += LoadedScene;
+        AchievementButton.PayOutOnCompletedEvent += AddReward;
+        CardBehaviour.CheckCard += CheckCorrectCall;
+	}
+
+    private void OnDisable()
+    {
+        LevelSizeButton.BoardSize -= SetupGame;
+        SceneManager.sceneLoaded -= LoadedScene;
+        AchievementButton.PayOutOnCompletedEvent -= AddReward;
+        CardBehaviour.CheckCard -= CheckCorrectCall;
+    }
+
+    #endregion EVENT_SUBSCRIPTION
+
+    private void Singleton()
     {
         if (gManager == null)
         {
@@ -65,48 +87,14 @@ public class GameManager : MonoBehaviour {
         {
             Destroy(gameObject);
         }
-
-        lManager = FindObjectOfType<LevelManager>();
-        dManager = new DataManager();
-
-
-
-
     }
 
-    //Add to events
-    private void OnEnable ()
-    {
-        LevelSizeButton.BoardSize += SetupGame;
-        SceneManager.sceneLoaded += LoadedScene;
-        AchievementButton.PayOutOnCompletedEvent += AddReward;
-        CardBehaviour.CheckCard += CheckCorrectCall;
-	}
-
-    //Remove from events
-    private void OnDisable()
-    {
-        LevelSizeButton.BoardSize -= SetupGame;
-        SceneManager.sceneLoaded -= LoadedScene;
-        AchievementButton.PayOutOnCompletedEvent -= AddReward;
-        CardBehaviour.CheckCard -= CheckCorrectCall;
-    }
-
-    #endregion ENABLE_DISABLE_METHODS
-
-    //Sets the GameMode from menu button - OnClick() does not support enum/thats why its integer.
     public void SetGameMode(GameMode mode)
     {
         gameMode = mode;
     }
 
-    public int Coins
-    {
-        get
-        {
-            return coins;
-        }
-    }
+
 
     public void SetCoins(GameObject go, int loadedcoins)
     {
@@ -117,12 +105,7 @@ public class GameManager : MonoBehaviour {
     }
     public bool CheckEnoughCoins(int cost)
     {
-        // Else money could be added if cost negative.
-        if(cost < 0)
-        {
-            return false;
-        }
-        else if(cost <= coins)
+        if(cost >= 0 && cost <= coins)
         {
             coins -= cost;
             SetCoinText();
@@ -163,46 +146,13 @@ public class GameManager : MonoBehaviour {
     //Passes amount of rows/cols/sets to DeckBuilder when the memory scene is loaded.
     private void LoadedScene(Scene scene, LoadSceneMode mode)
     {
-
-
         bool memoryScene = scene.name == "Memory";
         bool scriptAvailable = FindObjectOfType<DeckBuilder>();
 
         if (memoryScene && scriptAvailable)
         {
-            LoadData();
-
-            buildDeck = FindObjectOfType<DeckBuilder>();
-
-            buildDeck.GetSpriteSets(amountOfSets);
-            buildDeck.PlaceCards(rows, cols);
-
-            correctSets = 0;
-            SetSetsText();
-            SetTurnText(0);
-            SetTimeText(0);
-
-            switch (gameMode)
-            {
-                case GameMode.Relax:
-                    break;
-                case GameMode.Turns:
-                    turnLeft = 30;
-                    SetTurnText(turnLeft);
-                    break;
-                case GameMode.Time:
-                    timeLeft = 100;
-                    SetTimeText(timeLeft);
-                    InvokeRepeating("CheckTimeLeft", 1f, 1f);
-                    break;
-                case GameMode.Endless:
-                    timeLeft = 100;
-                    SetTimeText(timeLeft);
-                    InvokeRepeating("CheckTimeLeft", 1f, 1f);
-                    break;
-                default:
-                    throw new InvalidEnumArgumentException("An invalid game mode has been chosen");
-            }
+            BuildMemoryDeck();
+            GameModeSetup();
         }
         else
         {
@@ -210,32 +160,64 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    private void GameModeSetup()
+    {
+        correctSets = 0;
+        SetSetsText();
+        SetTurnText(0);
+        SetTimeText(0);
+
+        switch (gameMode)
+        {
+            case GameMode.Relax:
+                break;
+            case GameMode.Turns:
+                turnLeft = 30;
+                SetTurnText(turnLeft);
+                break;
+            case GameMode.Time:
+                timeLeft = 100;
+                SetTimeText(timeLeft);
+                InvokeRepeating("CheckTimeLeft", 1f, 1f);
+                break;
+            case GameMode.Endless:
+                timeLeft = 100;
+                SetTimeText(timeLeft);
+                InvokeRepeating("CheckTimeLeft", 1f, 1f);
+                break;
+            default:
+                throw new InvalidEnumArgumentException("An invalid game mode has been chosen");
+        }
+    }
+
+    private void BuildMemoryDeck()
+    {
+        _deckBuilder = FindObjectOfType<DeckBuilder>();
+        _deckBuilder.GetSpriteSets(amountOfSets);
+        _deckBuilder.PlaceCards(rows, cols);
+    }
+
+    #endregion SCENE_LOADED_METHOD
+
+    #region SAVE_LOAD_METHODS
+
     private void LoadData()
     {
-        if (dManager.LoadData() != null)
+        if (DataManager.LoadData() != null)
         {
-            AchievementContainer data = dManager.LoadData();
-            achievements = data.Achievements;
+            AchievementContainer data = DataManager.LoadData();
             coins = data.Coins;
-        }
-        else
-        {
-            throw new ArgumentNullException("No Data for the GameManager to grab!");
         }
     }
 
     private void SaveData()
     {
         AchievementContainer data = new AchievementContainer();
-
-        data.Achievements = achievements;
         data.Coins = coins;
-
-        dManager.SaveData(data);
+        DataManager.SaveData(data);
     }
 
-
-    #endregion SCENE_LOADED_METHOD
+    #endregion SAVE_LOAD_METHODS
 
     #region CHECKCARD_EVENT_METHODS
 
@@ -300,8 +282,8 @@ public class GameManager : MonoBehaviour {
 
     private void SetCoinText()
     {
-        uiControl = FindObjectOfType<UIController>();
-        uiControl.CoinText.text = coins.ToString() + " Coins";
+        _uiController = FindObjectOfType<UIController>();
+        _uiController.CoinText.text = coins.ToString() + " Coins";
     }
 
     #endregion SET_TEXT_FUNCTIONS
@@ -310,37 +292,37 @@ public class GameManager : MonoBehaviour {
 
     private int SetHighestTurnLeft()
     {
-        if(turnLeft > achievements[2].AmountAchieved)
+        if(turnLeft > _achievementInfo.Achievements[2].AmountAchieved)
         {
             return turnLeft;
         }
         else
         {
-            return achievements[2].AmountAchieved;
+            return _achievementInfo.Achievements[2].AmountAchieved;
         }
     }
 
     private int SetHighestTimeLeft()
     {
-        if(timeLeft > achievements[3].AmountAchieved)
+        if(timeLeft > _achievementInfo.Achievements[3].AmountAchieved)
         {
             return timeLeft;
         }
         else
         {
-            return achievements[3].AmountAchieved;
+            return _achievementInfo.Achievements[3].AmountAchieved;
         }
     }
 
     private int SetHighestTimeSurvived()
     {
-        if(timeSurvived > achievements[4].AmountAchieved)
+        if(timeSurvived > _achievementInfo.Achievements[4].AmountAchieved)
         {
             return timeSurvived;
         }
         else
         {
-            return achievements[4].AmountAchieved;
+            return _achievementInfo.Achievements[4].AmountAchieved;
         }
     }
 
@@ -365,19 +347,19 @@ public class GameManager : MonoBehaviour {
                 switch (gameMode)
                 {
                     case GameMode.Relax:
-                        achievements[0].AmountAchieved++;
+                        _achievementInfo.Achievements[0].AmountAchieved++;
                         coins += 10;
                         Win();
                         break;
                     case GameMode.Turns:
                         coins += 25;
-                        achievements[1].AmountAchieved++;
-                        achievements[2].AmountAchieved = SetHighestTurnLeft();
+                        _achievementInfo.Achievements[1].AmountAchieved++;
+                        _achievementInfo.Achievements[2].AmountAchieved = SetHighestTurnLeft();
                         Win();
                         break;
                     case GameMode.Time:
                         coins += 25;
-                        achievements[3].AmountAchieved = SetHighestTimeLeft();
+                        _achievementInfo.Achievements[3].AmountAchieved = SetHighestTimeLeft();
                         Win();
                         break;
                 }
@@ -409,7 +391,7 @@ public class GameManager : MonoBehaviour {
         {
             if (gameMode == GameMode.Endless)
             {
-                achievements[4].AmountAchieved = SetHighestTimeSurvived();
+                _achievementInfo.Achievements[4].AmountAchieved = SetHighestTimeSurvived();
                 coins += 25; // get more when more rounds won.
             }
 
@@ -423,30 +405,35 @@ public class GameManager : MonoBehaviour {
         correctSets = 0;
         SetSetsText();
         timeLeft += 30;
-        buildDeck.ClearBoard();
-        buildDeck.GetSpriteSets(amountOfSets);
-        buildDeck.PlaceCards(rows, cols);
+        _deckBuilder.ClearBoard();
+        _deckBuilder.GetSpriteSets(amountOfSets);
+        _deckBuilder.PlaceCards(rows, cols);
     }
 
     #endregion CHECK_WHATISLEFT_PERGAMEMODE_METHODS
 
+    #region WIN_LOSE_METHODS
 
-    //ui pop when game is won.
+    //TODO ui pop when game is won.
     private void Win()
     {
         SaveData();
         CancelInvoke("CheckTimeLeft");
-        lManager.LoadScene("Menu");
+        _levelManager.LoadScene("Menu");
         //Whatever happens the player wins the round.
     }
 
-    //ui pop when game is lost.
+    //TODO ui pop when game is lost.
     private void Lose()
     {
         SaveData();
         CancelInvoke("CheckTimeLeft");
         //Whatever happens when the player loses the round.
-        lManager.LoadScene("Menu");
+        _levelManager.LoadScene("Menu");
     }
+
+    #endregion
+
+
 
 }

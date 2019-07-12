@@ -7,19 +7,18 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{62509DA4-1E4C-E5FE-33CC-91ABF4EC6AAB}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>Assembly-CSharp.dll</AssemblyName>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
+    <UnityProjectGenerator>VSTU</UnityProjectGenerator>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>WebGL:20</UnityBuildTarget>
     <UnityVersion>2017.2.0f3</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -228,8 +227,8 @@
     <Compile Include="Assets\Scripts\ButtonScripts\GameModeButton.cs" />
     <Compile Include="Assets\Scripts\ButtonScripts\LevelSizeButton.cs" />
     <Compile Include="Assets\Scripts\CardBehaviour.cs" />
-    <Compile Include="Assets\Scripts\ChangeCardSprites\CardInfoButton.cs" />
     <Compile Include="Assets\Scripts\ChangeCardSprites\CardInfo.cs" />
+    <Compile Include="Assets\Scripts\ChangeCardSprites\CardInfoButton.cs" />
     <Compile Include="Assets\Scripts\ChangeCardSprites\CardInfoContainer.cs" />
     <Compile Include="Assets\Scripts\ChangeCardSprites\CreateCardInfo.cs" />
     <Compile Include="Assets\Scripts\DataManager.cs" />

@@ -16,12 +16,9 @@ public class CreateCardInfo : MonoBehaviour {
     private int[] cardFrontCosts = new int[] { 100, 200, 400, 400, 1000 };
     public Sprite[] cardFrontSprite;
 
-
-    DataManager dManager;
-
     private void OnEnable()
     {
-        dManager = new DataManager();
+
         CardInfoButton.SetCardInfoEvent += GetCardInfoFromButton;
         LoadData();
     }
@@ -34,14 +31,14 @@ public class CreateCardInfo : MonoBehaviour {
 
     private void LoadData()
     {
-        if (dManager.LoadCardInfo() == null)
+        if (DataManager.LoadCardInfo() == null)
         {
             CreatCardBack();
             CreateCardFront();
         }
-        else if (dManager.LoadCardInfo() != null)
+        else if (DataManager.LoadCardInfo() != null)
         {
-            CardInfoContainer data = dManager.LoadCardInfo();
+            CardInfoContainer data = DataManager.LoadCardInfo();
             cardBackInfo = data.CardBackInfo;
             cardFrontInfo = data.CardFrontInfo;
         }
@@ -52,7 +49,7 @@ public class CreateCardInfo : MonoBehaviour {
         CardInfoContainer data = new CardInfoContainer();
         data.CardBackInfo = cardBackInfo;
         data.CardFrontInfo = cardFrontInfo;
-        dManager.SaveCardInfo(data);
+        DataManager.SaveCardInfo(data);
     }
 
 
