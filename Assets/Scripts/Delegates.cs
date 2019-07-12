@@ -10,6 +10,8 @@ public delegate void PushCardBackInfoDelegate(PushCardBackInfoEventArgs e);
 public delegate void SetCardInfoUnlockedDelegate(SetCardInfoUnlockedEventArgs e);
 public delegate void SetAchievementOnCompletedDelegate(SetAchievementOnCompletedEventArgs e);
 public delegate void PayOutOnCompletedDelegate(PayOutOnCompletedEventArgs e);
+public delegate void CreateAchievementsDelegate(CreateAchievementEventArgs e);
+
 
 
 

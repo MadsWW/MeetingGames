@@ -6,11 +6,15 @@ using UnityEngine.SceneManagement;
 
 public  class AchievementInfo : MonoBehaviour
 {
+    //TODO Make Achievements into binary file and use that to load data.
+
+
     //Event that sets achievement data
     public event SetAchievementDataDelegate SetAchievementDataEvent;
+    public event CreateAchievementsDelegate CreateAchievementsEvent;
 
-    //Needs to be saved.
-    private List<Achievement> _achievements = new List<Achievement>();
+    private GameManager _gameManager;
+
 
     // For creating new achievements. //TODO Make XML of the achievements instead of Harcoded
     private bool[] achievementUnlocked = new bool[5];
@@ -20,40 +24,19 @@ public  class AchievementInfo : MonoBehaviour
     private int[] reward = new int[] { 100, 100, 200, 200, 300 };
     private int[] amountAchieved = new int[] { 0, 0, 0, 0, 0 };
 
-    public List<Achievement> Achievements { get { return _achievements; } }
 
     private void Awake()
     {
-        LoadAchievements();
-    }
-
-    private void LoadAchievements()
-    {
-        if (DataManager.LoadData() == null)
-        {
-            CreateAchievement();
-        }
-        else
-        {
-            _achievements = DataManager.LoadData().Achievements;
-        }
-    }
-
-    private void OnEnable()
-    {
-        AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
-    }
-    private void OnDisable()
-    {
-        AchievementButton.SetAchievementOnCompletedEvent -= OnAchievementCompleted;
+        _gameManager = FindObjectOfType<GameManager>();
     }
 
     //Creates all the achievements in the array
     #region CREATES_ACHIEVEMENTS
 
     //Creates all achievements 
-    private void CreateAchievement()
+    public void CreateAchievement()
     {
+        SetAchievementMessage();
         for (int i = 0; i < achievementMessage.Length; i++)
         {
             Achievement achievement = new Achievement();
@@ -63,9 +46,11 @@ public  class AchievementInfo : MonoBehaviour
             achievement.IsUnlocked = achievementUnlocked[i];
             achievement.Message = achievementMessage[i];
 
-            _achievements.Add(achievement);
+            CreateAchievementEventArgs args = new CreateAchievementEventArgs();
+            args.achievement = achievement;
+            CreateAchievementsEvent(args);
         }
-        SetAchievementMessage();
+
     }
 
     // Sets the message for all the achievements
@@ -85,11 +70,11 @@ public  class AchievementInfo : MonoBehaviour
 
     public void SetAchievements()
     {
-        CheckAchievement(0, _achievements[0]);
-        CheckAchievement(1, _achievements[1]);
-        CheckAchievement(2, _achievements[2]);
-        CheckAchievement(3, _achievements[3]);
-        CheckAchievement(4, _achievements[4]);
+        for(int i = 0; i < _gameManager.Achievements.Count; i++)
+        {
+            print(i);
+            CheckAchievement(i, _gameManager.Achievements[i]);
+        }
     }
 
     private void CheckAchievement(int achievementNumber, Achievement achievement)
@@ -102,13 +87,6 @@ public  class AchievementInfo : MonoBehaviour
     }
 
     #endregion SET_ACHIEVEMENT_EVENT_FUNCTIONS
-
-    //Sets the achievement in the achievement list when one is completed.
-    private void OnAchievementCompleted(SetAchievementOnCompletedEventArgs e)
-    {
-        _achievements[e.achievementNumber] = e.achievement;
-    }
-
 
 
 

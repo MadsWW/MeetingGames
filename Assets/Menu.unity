@@ -2352,6 +2352,7 @@ GameObject:
   - component: {fileID: 882936428}
   - component: {fileID: 882936427}
   - component: {fileID: 882936431}
+  - component: {fileID: 882936432}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -2458,6 +2459,23 @@ MonoBehaviour:
   - {fileID: 1493037242}
   backButton: {fileID: 307625809}
   CoinText: {fileID: 1178032465}
+--- !u!114 &882936432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 882936426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fc7706cfd0bac046bd10778d1b9e072, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AchievementSprites:
+  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &912302042
 GameObject:
   m_ObjectHideFlags: 0
@@ -2467,7 +2485,6 @@ GameObject:
   m_Component:
   - component: {fileID: 912302043}
   - component: {fileID: 912302044}
-  - component: {fileID: 912302045}
   m_Layer: 5
   m_Name: AchievementPanel
   m_TagString: Untagged
@@ -2504,23 +2521,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 912302042}
---- !u!114 &912302045
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 912302042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fc7706cfd0bac046bd10778d1b9e072, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AchievementSprites:
-  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &943593379
 GameObject:
   m_ObjectHideFlags: 0
@@ -3025,6 +3025,17 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 912302042}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 882936432}
+        m_MethodName: SetAchievements
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

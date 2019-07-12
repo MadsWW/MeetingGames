@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour {
  
     private GameMode gameMode;
 
-    private static GameManager gManager = null;
+    private static GameManager gManager;
 
     //Will be set from menu buttons if necessairy
     private int rows = 6;
@@ -44,6 +44,9 @@ public class GameManager : MonoBehaviour {
     private UIController _uiController;
     private AchievementInfo _achievementInfo;
 
+    private List<Achievement> _achievements = new List<Achievement>();
+    public List<Achievement> Achievements { get { return _achievements; } }
+
     private int coins = 100;
     public int Coins { get { return coins; }}
 
@@ -53,25 +56,30 @@ public class GameManager : MonoBehaviour {
         Singleton();
 
         _levelManager = FindObjectOfType<LevelManager>();
-        _achievementInfo = FindObjectOfType<AchievementInfo>();
+
     }
 
     #region EVENT_SUBSCRIPTION
 
     private void OnEnable ()
     {
+        _achievementInfo = FindObjectOfType<AchievementInfo>();
         LevelSizeButton.BoardSize += SetupGame;
         SceneManager.sceneLoaded += LoadedScene;
+        AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
         AchievementButton.PayOutOnCompletedEvent += AddReward;
         CardBehaviour.CheckCard += CheckCorrectCall;
+        _achievementInfo.CreateAchievementsEvent += LoadAchievements;
 	}
 
     private void OnDisable()
     {
         LevelSizeButton.BoardSize -= SetupGame;
         SceneManager.sceneLoaded -= LoadedScene;
+        AchievementButton.SetAchievementOnCompletedEvent -= OnAchievementCompleted;
         AchievementButton.PayOutOnCompletedEvent -= AddReward;
         CardBehaviour.CheckCard -= CheckCorrectCall;
+        if (_achievementInfo) { _achievementInfo.CreateAchievementsEvent -= LoadAchievements; }
     }
 
     #endregion EVENT_SUBSCRIPTION
@@ -87,6 +95,11 @@ public class GameManager : MonoBehaviour {
         {
             Destroy(gameObject);
         }
+    }
+
+    private void LoadAchievements(CreateAchievementEventArgs args)
+    {
+        _achievements.Add(args.achievement);
     }
 
     public void SetGameMode(GameMode mode)
@@ -156,6 +169,8 @@ public class GameManager : MonoBehaviour {
         }
         else
         {
+
+            LoadData();
             SetCoinText();
         }
     }
@@ -207,12 +222,20 @@ public class GameManager : MonoBehaviour {
         {
             AchievementContainer data = DataManager.LoadData();
             coins = data.Coins;
+            _achievements = data.Achievements;
+        }
+        else
+        {
+            _achievementInfo.CreateAchievement();
+            SaveData();
+            LoadData();
         }
     }
 
     private void SaveData()
     {
         AchievementContainer data = new AchievementContainer();
+        data.Achievements = _achievements;
         data.Coins = coins;
         DataManager.SaveData(data);
     }
@@ -292,37 +315,37 @@ public class GameManager : MonoBehaviour {
 
     private int SetHighestTurnLeft()
     {
-        if(turnLeft > _achievementInfo.Achievements[2].AmountAchieved)
+        if(turnLeft > _achievements[2].AmountAchieved)
         {
             return turnLeft;
         }
         else
         {
-            return _achievementInfo.Achievements[2].AmountAchieved;
+            return _achievements[2].AmountAchieved;
         }
     }
 
     private int SetHighestTimeLeft()
     {
-        if(timeLeft > _achievementInfo.Achievements[3].AmountAchieved)
+        if(timeLeft > _achievements[3].AmountAchieved)
         {
             return timeLeft;
         }
         else
         {
-            return _achievementInfo.Achievements[3].AmountAchieved;
+            return _achievements[3].AmountAchieved;
         }
     }
 
     private int SetHighestTimeSurvived()
     {
-        if(timeSurvived > _achievementInfo.Achievements[4].AmountAchieved)
+        if(timeSurvived > _achievements[4].AmountAchieved)
         {
             return timeSurvived;
         }
         else
         {
-            return _achievementInfo.Achievements[4].AmountAchieved;
+            return _achievements[4].AmountAchieved;
         }
     }
 
@@ -347,19 +370,19 @@ public class GameManager : MonoBehaviour {
                 switch (gameMode)
                 {
                     case GameMode.Relax:
-                        _achievementInfo.Achievements[0].AmountAchieved++;
+                        _achievements[0].AmountAchieved++;
                         coins += 10;
                         Win();
                         break;
                     case GameMode.Turns:
                         coins += 25;
-                        _achievementInfo.Achievements[1].AmountAchieved++;
-                        _achievementInfo.Achievements[2].AmountAchieved = SetHighestTurnLeft();
+                        _achievements[1].AmountAchieved++;
+                        _achievements[2].AmountAchieved = SetHighestTurnLeft();
                         Win();
                         break;
                     case GameMode.Time:
                         coins += 25;
-                        _achievementInfo.Achievements[3].AmountAchieved = SetHighestTimeLeft();
+                        _achievements[3].AmountAchieved = SetHighestTimeLeft();
                         Win();
                         break;
                 }
@@ -382,8 +405,6 @@ public class GameManager : MonoBehaviour {
     //Checks how much time is left and passes that to event.
     private void CheckTimeLeft()
     {
-
-
         timeLeft--;
         SetTimeText(timeLeft);
 
@@ -391,7 +412,7 @@ public class GameManager : MonoBehaviour {
         {
             if (gameMode == GameMode.Endless)
             {
-                _achievementInfo.Achievements[4].AmountAchieved = SetHighestTimeSurvived();
+                _achievements[4].AmountAchieved = SetHighestTimeSurvived();
                 coins += 25; // get more when more rounds won.
             }
 
@@ -434,6 +455,9 @@ public class GameManager : MonoBehaviour {
 
     #endregion
 
-
+    private void OnAchievementCompleted(SetAchievementOnCompletedEventArgs e)
+    {
+        _achievements[e.achievementNumber] = e.achievement;
+    }
 
 }
