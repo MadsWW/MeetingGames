@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<AchievementCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Achievements>
+    <Achievement>
+      <AmountToAchieve>10</AmountToAchieve>
+      <AmountAchieved>0</AmountAchieved>
+      <CashReward>100</CashReward>
+      <IsUnlocked>false</IsUnlocked>
+      <Message>Win 10 Relax Mode Games</Message>
+    </Achievement>
+    <Achievement>
+      <AmountToAchieve>10</AmountToAchieve>
+      <AmountAchieved>1</AmountAchieved>
+      <CashReward>100</CashReward>
+      <IsUnlocked>false</IsUnlocked>
+      <Message>Win 10 Turn Mode Games</Message>
+    </Achievement>
+    <Achievement>
+      <AmountToAchieve>10</AmountToAchieve>
+      <AmountAchieved>0</AmountAchieved>
+      <CashReward>200</CashReward>
+      <IsUnlocked>false</IsUnlocked>
+      <Message>Win with 10 Turns Left</Message>
+    </Achievement>
+    <Achievement>
+      <AmountToAchieve>20</AmountToAchieve>
+      <AmountAchieved>35</AmountAchieved>
+      <CashReward>200</CashReward>
+      <IsUnlocked>false</IsUnlocked>
+      <Message>Win with 20 Seconds Left</Message>
+    </Achievement>
+    <Achievement>
+      <AmountToAchieve>200</AmountToAchieve>
+      <AmountAchieved>0</AmountAchieved>
+      <CashReward>300</CashReward>
+      <IsUnlocked>false</IsUnlocked>
+      <Message>Survive for 200 Seconds.</Message>
+    </Achievement>
+  </Achievements>
+  <Coins>100</Coins>
+</AchievementCollection>

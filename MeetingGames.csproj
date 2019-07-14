@@ -243,6 +243,10 @@
     <Compile Include="Assets\Scripts\TextManager.cs" />
     <Compile Include="Assets\Scripts\UIController.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\XML\cardinfo.xml" />
+    <None Include="Assets\XML\gamedata.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>

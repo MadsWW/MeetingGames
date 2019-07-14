@@ -666,7 +666,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 307625809}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 370.25128, y: -710, z: 0}
+  m_LocalPosition: {x: 370, y: -710, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 332219560}
@@ -2424,8 +2424,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 882936426}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 168, y: 298.5, z: 0}
-  m_LocalScale: {x: 0.373125, y: 0.373125, z: 0.373125}
+  m_LocalPosition: {x: 171, y: 304, z: 0}
+  m_LocalScale: {x: 0.38, y: 0.38, z: 0.38}
   m_Children:
   - {fileID: 1578691188}
   - {fileID: 1284072331}
@@ -3142,7 +3142,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1178032463}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 279.35284, y: 730.1, z: 0}
+  m_LocalPosition: {x: 279.10156, y: 730.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 882936430}
@@ -4969,6 +4969,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 643ca6afb7352f845b07fb07fca3f5bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AchievementXML: {fileID: 4900000, guid: 27bc2d745fee58147ab891ad04e52089, type: 3}
+  CardInfoXML: {fileID: 4900000, guid: ec2c1e160c12a8f459c2c2835eb8fb3e, type: 3}
 --- !u!4 &1896115714
 Transform:
   m_ObjectHideFlags: 0

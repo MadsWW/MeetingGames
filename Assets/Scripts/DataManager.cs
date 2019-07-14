@@ -12,14 +12,14 @@ using System.Xml.Serialization;
 // SetData from events, so only specific classes can access methods.
 public  class DataManager : MonoBehaviour {
 
-    public XmlDocument AchievementXML;
-    public XmlDocument CardInfoXML;
+    [SerializeField]private TextAsset AchievementXML;
+    [SerializeField]private TextAsset CardInfoXML;
 
     AchievementInfo _achievementInfo;
     CreateCardInfo _createCardInfo;
 
-    private const string GAMEDATA_FILE_NAME = "/gamedata.dat";
-    private const string CARDINFO_FILE_NAME = "/cardinfo.dat";
+    private const string GAMEDATA_FILE_NAME = "/gamedata.xml";
+    private const string CARDINFO_FILE_NAME = "/cardinfo.xml";
 
     private List<Achievement> _achievements = new List<Achievement>();
     public List<Achievement> Achievements { get { return _achievements; } private set { } }
