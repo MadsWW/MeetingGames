@@ -17,6 +17,13 @@ public class GameManager : MonoBehaviour {
     public event ChangeSetsTextDelegate ChangeSetsLeft;
     public event ChangeTurnTextDelegate ChangeTurnLeft;
     public event ChangeTimeTextDelegate ChangeTimeLeft;
+
+    public static event SaveGameDelegate SaveGameEvent;
+    public static event LoadGameDelegate LoadGameEvent;
+
+    public static event PayOutOnCompletedDelegate OnGameWonEvent;
+
+
  
     private GameMode gameMode;
 
@@ -43,12 +50,7 @@ public class GameManager : MonoBehaviour {
     private LevelManager _levelManager;
     private UIController _uiController;
     private AchievementInfo _achievementInfo;
-
-    private List<Achievement> _achievements = new List<Achievement>();
-    public List<Achievement> Achievements { get { return _achievements; } }
-
-    private int coins = 100;
-    public int Coins { get { return coins; }}
+    private DataManager _dataManager;
 
 
     private void Awake()
@@ -58,31 +60,6 @@ public class GameManager : MonoBehaviour {
         _levelManager = FindObjectOfType<LevelManager>();
 
     }
-
-    #region EVENT_SUBSCRIPTION
-
-    private void OnEnable ()
-    {
-        _achievementInfo = FindObjectOfType<AchievementInfo>();
-        LevelSizeButton.BoardSize += SetupGame;
-        SceneManager.sceneLoaded += LoadedScene;
-        AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
-        AchievementButton.PayOutOnCompletedEvent += AddReward;
-        CardBehaviour.CheckCard += CheckCorrectCall;
-        _achievementInfo.CreateAchievementsEvent += LoadAchievements;
-	}
-
-    private void OnDisable()
-    {
-        LevelSizeButton.BoardSize -= SetupGame;
-        SceneManager.sceneLoaded -= LoadedScene;
-        AchievementButton.SetAchievementOnCompletedEvent -= OnAchievementCompleted;
-        AchievementButton.PayOutOnCompletedEvent -= AddReward;
-        CardBehaviour.CheckCard -= CheckCorrectCall;
-        if (_achievementInfo) { _achievementInfo.CreateAchievementsEvent -= LoadAchievements; }
-    }
-
-    #endregion EVENT_SUBSCRIPTION
 
     private void Singleton()
     {
@@ -97,44 +74,31 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private void LoadAchievements(CreateAchievementEventArgs args)
+
+    #region EVENT_SUBSCRIPTION
+
+    private void OnEnable ()
     {
-        _achievements.Add(args.achievement);
+        LevelSizeButton.BoardSize += SetupGame;
+        SceneManager.sceneLoaded += LoadedScene;
+        AchievementButton.PayOutOnCompletedEvent += AddReward;
+        CardBehaviour.CheckCard += CheckCorrectCall;
+	}
+
+    private void OnDisable()
+    {
+        LevelSizeButton.BoardSize -= SetupGame;
+        SceneManager.sceneLoaded -= LoadedScene;
+        AchievementButton.PayOutOnCompletedEvent -= AddReward;
+        CardBehaviour.CheckCard -= CheckCorrectCall;
     }
+
+    #endregion EVENT_SUBSCRIPTION
+
 
     public void SetGameMode(GameMode mode)
     {
         gameMode = mode;
-    }
-
-
-
-    public void SetCoins(GameObject go, int loadedcoins)
-    {
-        if (go.GetComponent<AchievementInfo>())
-        {
-            coins = loadedcoins;
-        }
-    }
-    public bool CheckEnoughCoins(int cost)
-    {
-        if(cost >= 0 && cost <= coins)
-        {
-            coins -= cost;
-            SetCoinText();
-            return true;
-        }
-        else
-        {
-            return false;
-            // Could show message: not enough coins to buy.
-        }
-    }
-
-    private void AddReward(PayOutOnCompletedEventArgs args)
-    {
-        coins += args.Reward;
-        SetCoinText();
     }
 
     #region BOARD_SIZE_EVENT_METHODS
@@ -159,6 +123,8 @@ public class GameManager : MonoBehaviour {
     //Passes amount of rows/cols/sets to DeckBuilder when the memory scene is loaded.
     private void LoadedScene(Scene scene, LoadSceneMode mode)
     {
+        _dataManager = FindObjectOfType<DataManager>();
+
         bool memoryScene = scene.name == "Memory";
         bool scriptAvailable = FindObjectOfType<DeckBuilder>();
 
@@ -169,8 +135,6 @@ public class GameManager : MonoBehaviour {
         }
         else
         {
-
-            LoadData();
             SetCoinText();
         }
     }
@@ -214,34 +178,6 @@ public class GameManager : MonoBehaviour {
 
     #endregion SCENE_LOADED_METHOD
 
-    #region SAVE_LOAD_METHODS
-
-    private void LoadData()
-    {
-        if (DataManager.LoadData() != null)
-        {
-            AchievementContainer data = DataManager.LoadData();
-            coins = data.Coins;
-            _achievements = data.Achievements;
-        }
-        else
-        {
-            _achievementInfo.CreateAchievement();
-            SaveData();
-            LoadData();
-        }
-    }
-
-    private void SaveData()
-    {
-        AchievementContainer data = new AchievementContainer();
-        data.Achievements = _achievements;
-        data.Coins = coins;
-        DataManager.SaveData(data);
-    }
-
-    #endregion SAVE_LOAD_METHODS
-
     #region CHECKCARD_EVENT_METHODS
 
     //Check if the two selectedCards are equal to eachother and resets the selected cards afterwards.
@@ -278,7 +214,6 @@ public class GameManager : MonoBehaviour {
 
     #region SET_TEXT_FUNCTIONS
 
-    //Sends event with text from amount of sets completed.
     private void SetSetsText()
     {
         ChangeSetsTextEventArgs args = new ChangeSetsTextEventArgs();
@@ -287,7 +222,6 @@ public class GameManager : MonoBehaviour {
         ChangeSetsLeft(args);
     }
 
-    //Sends event with amount of turns left.
     private void SetTurnText(int turn)
     {
         ChangeTurnTextEventArgs args = new ChangeTurnTextEventArgs();
@@ -295,7 +229,6 @@ public class GameManager : MonoBehaviour {
         ChangeTurnLeft(args);
     }
 
-    //Sends event with amount of time left.
     private void SetTimeText(int time)
     {
         ChangeTimeTextEventArgs args = new ChangeTimeTextEventArgs();
@@ -306,7 +239,7 @@ public class GameManager : MonoBehaviour {
     private void SetCoinText()
     {
         _uiController = FindObjectOfType<UIController>();
-        _uiController.CoinText.text = coins.ToString() + " Coins";
+        _uiController.CoinText.text = _dataManager.Coins.ToString() + " Coins";
     }
 
     #endregion SET_TEXT_FUNCTIONS
@@ -315,37 +248,37 @@ public class GameManager : MonoBehaviour {
 
     private int SetHighestTurnLeft()
     {
-        if(turnLeft > _achievements[2].AmountAchieved)
+        if(turnLeft > _dataManager.Achievements[2].AmountAchieved)
         {
             return turnLeft;
         }
         else
         {
-            return _achievements[2].AmountAchieved;
+            return _dataManager.Achievements[2].AmountAchieved;
         }
     }
 
     private int SetHighestTimeLeft()
     {
-        if(timeLeft > _achievements[3].AmountAchieved)
+        if(timeLeft > _dataManager.Achievements[3].AmountAchieved)
         {
             return timeLeft;
         }
         else
         {
-            return _achievements[3].AmountAchieved;
+            return _dataManager.Achievements[3].AmountAchieved;
         }
     }
 
     private int SetHighestTimeSurvived()
     {
-        if(timeSurvived > _achievements[4].AmountAchieved)
+        if(timeSurvived > _dataManager.Achievements[4].AmountAchieved)
         {
             return timeSurvived;
         }
         else
         {
-            return _achievements[4].AmountAchieved;
+            return _dataManager.Achievements[4].AmountAchieved;
         }
     }
 
@@ -360,32 +293,30 @@ public class GameManager : MonoBehaviour {
 
         if (correctSets >= amountOfSets)
         {
-            if (gameMode == GameMode.Endless)
+            switch (gameMode)
             {
-                timeSurvived += timeLeft;
-                ResetBoard();
-            }
-            else
-            {
-                switch (gameMode)
-                {
-                    case GameMode.Relax:
-                        _achievements[0].AmountAchieved++;
-                        coins += 10;
-                        Win();
-                        break;
-                    case GameMode.Turns:
-                        coins += 25;
-                        _achievements[1].AmountAchieved++;
-                        _achievements[2].AmountAchieved = SetHighestTurnLeft();
-                        Win();
-                        break;
-                    case GameMode.Time:
-                        coins += 25;
-                        _achievements[3].AmountAchieved = SetHighestTimeLeft();
-                        Win();
-                        break;
-                }
+                case GameMode.Relax:
+                    _dataManager.Achievements[0].AmountAchieved++;
+                    OnGameWon(10); //TODO Change to settings instead of hardcoded
+                    Win();
+                    break;
+                case GameMode.Turns:
+                    OnGameWon(25);
+                    _dataManager.Achievements[1].AmountAchieved++;
+                    _dataManager.Achievements[2].AmountAchieved = SetHighestTurnLeft();
+                    Win();
+                    break;
+                case GameMode.Time:
+                    OnGameWon(25);
+                    _dataManager.Achievements[3].AmountAchieved = SetHighestTimeLeft();
+                    Win();
+                    break;
+                case GameMode.Endless:
+                    OnGameWon(25);
+                    _dataManager.Achievements[4].AmountAchieved = SetHighestTimeSurvived();
+                    timeSurvived += timeLeft;
+                    ResetBoard();
+                    break;
             }
         }
     }
@@ -410,12 +341,6 @@ public class GameManager : MonoBehaviour {
 
         if (timeLeft <= 0)
         {
-            if (gameMode == GameMode.Endless)
-            {
-                _achievements[4].AmountAchieved = SetHighestTimeSurvived();
-                coins += 25; // get more when more rounds won.
-            }
-
             Lose();
         }
     }
@@ -438,7 +363,7 @@ public class GameManager : MonoBehaviour {
     //TODO ui pop when game is won.
     private void Win()
     {
-        SaveData();
+        SaveGameEvent();
         CancelInvoke("CheckTimeLeft");
         _levelManager.LoadScene("Menu");
         //Whatever happens the player wins the round.
@@ -447,17 +372,24 @@ public class GameManager : MonoBehaviour {
     //TODO ui pop when game is lost.
     private void Lose()
     {
-        SaveData();
+        SaveGameEvent();
         CancelInvoke("CheckTimeLeft");
         //Whatever happens when the player loses the round.
         _levelManager.LoadScene("Menu");
     }
 
+    private void OnGameWon(int reward)
+    {
+        PayOutOnCompletedEventArgs args = new PayOutOnCompletedEventArgs();
+        args.Reward = reward;
+        OnGameWonEvent(args);
+    }
+
+    private void AddReward(PayOutOnCompletedEventArgs args)
+    {
+        SetCoinText();
+    }
     #endregion
 
-    private void OnAchievementCompleted(SetAchievementOnCompletedEventArgs e)
-    {
-        _achievements[e.achievementNumber] = e.achievement;
-    }
 
 }

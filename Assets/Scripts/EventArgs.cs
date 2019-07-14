@@ -59,6 +59,11 @@ public class PayOutOnCompletedEventArgs : EventArgs
     public int Reward { get; set; }
 }
 
+public class OnPurchaseCompletedEventArgs : EventArgs
+{
+    public int Cost { get; set; }
+}
+
 public class CreateAchievementEventArgs : EventArgs
 {
     public Achievement achievement { get; set; }

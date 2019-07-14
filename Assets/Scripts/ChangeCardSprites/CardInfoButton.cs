@@ -8,6 +8,7 @@ public enum CardType { CardFront, CardBack }
 public class CardInfoButton : MonoBehaviour {
 
     public static event SetCardInfoUnlockedDelegate SetCardInfoEvent;
+    public static event OnPurchaseCompletedDelegate PurchaseItemEvent;
 
     // Public variables. To detect which type and sprite it is.
     public int cardSpriteNumber;
@@ -26,6 +27,7 @@ public class CardInfoButton : MonoBehaviour {
     // Needed to check when event is triggered
     private CreateCardInfo createCardInfo;
     private GameManager gManager;
+    private DataManager _dataManager;
 
     private void Awake()
     {
@@ -34,21 +36,19 @@ public class CardInfoButton : MonoBehaviour {
         buttonSprite = GetComponent<Image>();
         gManager = FindObjectOfType<GameManager>(); 
         createCardInfo = FindObjectOfType<CreateCardInfo>();
-
-        button.onClick.AddListener(SelectCard);
-
-        
+        _dataManager = FindObjectOfType<DataManager>(); 
     }
 
     private void OnEnable()
     {
         createCardInfo.PushCardInfo += SetInfo;
-
+        button.onClick.AddListener(SelectCard);
     }
 
     private void OnDisable()
     {
         createCardInfo.PushCardInfo -= SetInfo;
+        button.onClick.RemoveListener(SelectCard);
     }
     
     //When PushCardBackInfoEvent is triggered
@@ -80,17 +80,39 @@ public class CardInfoButton : MonoBehaviour {
         if (!cardInfo.isUnlocked)
         {
             //Set data to CreateCardInfo so bool IsUnlocked can be saved when bought.
-            if (gManager.CheckEnoughCoins(cardInfo.price))
+            if (CheckEnoughCoins())
             {
                 cardInfo.isUnlocked = true;
                 text.text = string.Empty;
             }
-            //(else)maybe setmessage not enough money.
+            else
+            {
+                //(else)maybe setmessage not enough money.
+            }
         }
         else
         {
-            //Set Selected card front in gamemanager.
+            //TODO Set Selected card front in gamemanager.
         }
+    }
+    public bool CheckEnoughCoins()
+    {
+        if (cardInfo.price >= 0 && cardInfo.price <= _dataManager.Coins)
+        {
+            PurchaseItemSuccesfull(cardInfo.price);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void PurchaseItemSuccesfull(int cost)
+    {
+        OnPurchaseCompletedEventArgs args = new OnPurchaseCompletedEventArgs();
+        args.Cost = cost;
+        PurchaseItemEvent(args);
     }
 
     private void PushCardInfo()

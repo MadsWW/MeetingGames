@@ -11,9 +11,9 @@ public  class AchievementInfo : MonoBehaviour
 
     //Event that sets achievement data
     public event SetAchievementDataDelegate SetAchievementDataEvent;
-    public event CreateAchievementsDelegate CreateAchievementsEvent;
+    public static event CreateAchievementsDelegate CreateAchievementsEvent;
 
-    private GameManager _gameManager;
+    private DataManager _dataManager;
 
 
     // For creating new achievements. //TODO Make XML of the achievements instead of Harcoded
@@ -27,7 +27,7 @@ public  class AchievementInfo : MonoBehaviour
 
     private void Awake()
     {
-        _gameManager = FindObjectOfType<GameManager>();
+        _dataManager = FindObjectOfType<DataManager>();
     }
 
     //Creates all the achievements in the array
@@ -70,10 +70,9 @@ public  class AchievementInfo : MonoBehaviour
 
     public void SetAchievements()
     {
-        for(int i = 0; i < _gameManager.Achievements.Count; i++)
+        for(int i = 0; i < _dataManager.Achievements.Count; i++)
         {
-            print(i);
-            CheckAchievement(i, _gameManager.Achievements[i]);
+            CheckAchievement(i, _dataManager.Achievements[i]);
         }
     }
 

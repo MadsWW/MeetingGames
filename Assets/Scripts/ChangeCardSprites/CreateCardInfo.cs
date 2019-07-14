@@ -6,6 +6,8 @@ public class CreateCardInfo : MonoBehaviour {
 
     public event PushCardBackInfoDelegate PushCardInfo;
 
+    private DataManager _dataManager;
+
     private List<CardInfo> cardBackInfo = new List<CardInfo>();
     private bool[] cardBackUnlocked = new bool[5];
     private int[] cardBackCosts = new int[] { 100, 200, 400, 400, 1000 };
@@ -18,45 +20,21 @@ public class CreateCardInfo : MonoBehaviour {
 
     private void OnEnable()
     {
-
+        _dataManager = FindObjectOfType<DataManager>();
         CardInfoButton.SetCardInfoEvent += GetCardInfoFromButton;
-        LoadData();
     }
 
     private void OnDisable()
     {
         CardInfoButton.SetCardInfoEvent += GetCardInfoFromButton;
-        SaveData();
     }
 
-    private void LoadData()
-    {
-        if (DataManager.LoadCardInfo() == null)
-        {
-            CreatCardBack();
-            CreateCardFront();
-        }
-        else if (DataManager.LoadCardInfo() != null)
-        {
-            CardInfoContainer data = DataManager.LoadCardInfo();
-            cardBackInfo = data.CardBackInfo;
-            cardFrontInfo = data.CardFrontInfo;
-        }
-    }
-
-    private void SaveData()
-    {
-        CardInfoContainer data = new CardInfoContainer();
-        data.CardBackInfo = cardBackInfo;
-        data.CardFrontInfo = cardFrontInfo;
-        DataManager.SaveCardInfo(data);
-    }
 
 
     //Creates the data if there is non.
     #region CREATE_CARDINFO_DATA
 
-    private void CreatCardBack()
+    public void CreatCardBack()
     {
         for(int i = 0; i < cardBackUnlocked.Length; i++)
         {
@@ -70,7 +48,7 @@ public class CreateCardInfo : MonoBehaviour {
         }
     }
 
-    private void CreateCardFront()
+    public void CreateCardFront()
     {
         for (int i = 0; i < cardFrontUnlocked.Length; i++)
         {
