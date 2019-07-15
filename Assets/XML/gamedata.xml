@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<AchievementCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<AchievementCollection>
   <Achievements>
     <Achievement>
       <AmountToAchieve>10</AmountToAchieve>
@@ -10,7 +10,7 @@
     </Achievement>
     <Achievement>
       <AmountToAchieve>10</AmountToAchieve>
-      <AmountAchieved>1</AmountAchieved>
+      <AmountAchieved>0</AmountAchieved>
       <CashReward>100</CashReward>
       <IsUnlocked>false</IsUnlocked>
       <Message>Win 10 Turn Mode Games</Message>
@@ -24,10 +24,10 @@
     </Achievement>
     <Achievement>
       <AmountToAchieve>20</AmountToAchieve>
-      <AmountAchieved>35</AmountAchieved>
+      <AmountAchieved>0</AmountAchieved>
       <CashReward>200</CashReward>
       <IsUnlocked>false</IsUnlocked>
-      <Message>Win with 20 Seconds Left</Message>
+      <Message>Win with more than 20 Seconds Left</Message>
     </Achievement>
     <Achievement>
       <AmountToAchieve>200</AmountToAchieve>

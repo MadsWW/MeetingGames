@@ -12,6 +12,8 @@ using System.Xml.Serialization;
 // SetData from events, so only specific classes can access methods.
 public  class DataManager : MonoBehaviour {
 
+    public event ChangeCoinTextDelegate ChangeCoinTextEvent;
+
     [SerializeField]private TextAsset AchievementXML;
     [SerializeField]private TextAsset CardInfoXML;
 
@@ -42,9 +44,9 @@ public  class DataManager : MonoBehaviour {
         _createCardInfo = FindObjectOfType<CreateCardInfo>();
         GameManager.SaveGameEvent += SaveGame;
         GameManager.LoadGameEvent += LoadGame;
-        AchievementInfo.CreateAchievementsEvent += AddNewAchievement;
         AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
         GameManager.OnGameWonEvent += AddReward;
+        CardInfoButton.PurchaseItemEvent += PurchaseMade;
     }
 
     private void OnDisable()
@@ -52,9 +54,9 @@ public  class DataManager : MonoBehaviour {
         SaveGame();
         GameManager.SaveGameEvent -= SaveGame;
         GameManager.LoadGameEvent -= LoadGame;
-        AchievementInfo.CreateAchievementsEvent -= AddNewAchievement;
         AchievementButton.SetAchievementOnCompletedEvent -= OnAchievementCompleted;
         GameManager.OnGameWonEvent -= AddReward;
+        CardInfoButton.PurchaseItemEvent -= PurchaseMade;
     }
 
     #endregion //UNITY_API
@@ -78,44 +80,21 @@ public  class DataManager : MonoBehaviour {
     {
         LoadGameData();
         LoadCardInfoData();
+        TriggerSetCoinTextEvent();
     }
 
     private void LoadGameData()
     {
-        if (LoadGameData(GAMEDATA_FILE_NAME) != null)
-        {
-            AchievementContainer data = LoadGameData(GAMEDATA_FILE_NAME);
-            _coins = data.Coins;
-            _achievements = data.Achievements;
-        }
-        else
-        {
-            _achievementInfo.CreateAchievement();
-            SaveGame();
-            LoadGameData();
-        }
+        AchievementContainer data = GetGameData(GAMEDATA_FILE_NAME);
+        _coins = data.Coins;
+        _achievements = data.Achievements;
     }
 
     private void LoadCardInfoData()
     {
-        if (LoadCardInfo() != null)
-        {
-            CardInfoContainer data = LoadCardInfo();
-            _cardBackInfo = data.CardBackInfo;
-            _cardFrontInfo = data.CardFrontInfo;
-        }
-        else
-        {
-            _createCardInfo.CreatCardBack();
-            _createCardInfo.CreateCardFront();
-            SaveGame();
-            LoadCardInfo();
-        }
-    }
-
-    private void AddNewAchievement(CreateAchievementEventArgs args)
-    {
-        _achievements.Add(args.achievement);
+        CardInfoContainer data = GetCardInfo(CARDINFO_FILE_NAME);
+        _cardBackInfo = data.CardBackInfo;
+        _cardFrontInfo = data.CardFrontInfo;
     }
 
     private void OnAchievementCompleted(SetAchievementOnCompletedEventArgs e)
@@ -126,11 +105,25 @@ public  class DataManager : MonoBehaviour {
     private void AddReward(PayOutOnCompletedEventArgs args)
     {
         _coins += args.Reward;
+        TriggerSetCoinTextEvent();
+    }
+
+    private void PurchaseMade(OnPurchaseCompletedEventArgs args)
+    {
+        _coins -= args.Cost;
+        TriggerSetCoinTextEvent();
+    }
+
+    private void TriggerSetCoinTextEvent()
+    {
+        ChangeCoinTextEventArgs args = new ChangeCoinTextEventArgs();
+        args.Coins = _coins;
+        ChangeCoinTextEvent(args);
     }
 
     #endregion //EVENT_FUNCTIONS
 
-    #region SAVE_LOAD_FUNCTIONS
+    #region SAVE_LOAD_XML_FUNCTIONS
 
     private void SaveData<T>(T data, string fileName)
     {
@@ -142,45 +135,44 @@ public  class DataManager : MonoBehaviour {
 
     }
 
-    private AchievementContainer LoadGameData(string fileName)
+    private AchievementContainer GetGameData(string fileName)
     {
-        if(File.Exists(Application.persistentDataPath + fileName))
+        XmlSerializer serializer = new XmlSerializer(typeof(AchievementContainer));
+        AchievementContainer data;
+
+        if (File.Exists(Application.persistentDataPath + fileName))
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(AchievementContainer));
             FileStream filestream = File.Open(Application.persistentDataPath + fileName, FileMode.Open);
-            AchievementContainer data = serializer.Deserialize(filestream) as AchievementContainer;
+            data = serializer.Deserialize(filestream) as AchievementContainer;
             filestream.Close();
             return data;
         }
         else
         {
-            return null;
+            StringReader reader = new StringReader(AchievementXML.text);
+            data = serializer.Deserialize(reader) as AchievementContainer;
+            return data;
         }
     }
 
-    private void SaveCardInfo(CardInfoContainer data)
+
+    private CardInfoContainer GetCardInfo(string fileName)
     {
         XmlSerializer serializer = new XmlSerializer(typeof(CardInfoContainer));
-        FileStream filestream = File.Create(Application.persistentDataPath + "/cardinfo.dat"); // replace hardcoded file to string.
+        CardInfoContainer data;
 
-        serializer.Serialize(filestream, data);
-        filestream.Close();
-
-    }
-
-    private CardInfoContainer LoadCardInfo()
-    {
-        if (File.Exists(Application.persistentDataPath + "/cardinfo.dat"))
+        if (File.Exists(Application.persistentDataPath + fileName))
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(CardInfoContainer));
-            FileStream filestream = File.Open(Application.persistentDataPath + "/cardinfo.dat", FileMode.Open);
-            CardInfoContainer data = serializer.Deserialize(filestream) as CardInfoContainer;
+            FileStream filestream = File.Open(Application.persistentDataPath + fileName, FileMode.Open);
+            data = serializer.Deserialize(filestream) as CardInfoContainer;
             filestream.Close();
             return data;
         }
         else
         {
-            return null;
+            StringReader reader = new StringReader(CardInfoXML.text);
+            data = serializer.Deserialize(reader) as CardInfoContainer;
+            return data;
         }
     }
 

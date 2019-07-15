@@ -30,6 +30,11 @@ public class ChangeTimeTextEventArgs : EventArgs
     public int TimeLeft { get; set; }
 }
 
+public class ChangeCoinTextEventArgs : EventArgs
+{
+    public int Coins { get; set; }
+}
+
 public class SetAchievementDataEventArgs: EventArgs
 {
     public int AchievementNumber { get; set; }
@@ -39,12 +44,6 @@ public class SetAchievementDataEventArgs: EventArgs
 public class PushCardBackInfoEventArgs : EventArgs
 {
     public Sprite CardSprite { get; set; }
-    public CardInfo Card { get; set; }
-}
-
-public class SetCardInfoUnlockedEventArgs : EventArgs
-{
-    public int cardNumber { get; set; }
     public CardInfo Card { get; set; }
 }
 

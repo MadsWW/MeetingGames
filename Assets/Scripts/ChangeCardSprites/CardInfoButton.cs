@@ -7,7 +7,6 @@ public enum CardType { CardFront, CardBack }
 
 public class CardInfoButton : MonoBehaviour {
 
-    public static event SetCardInfoUnlockedDelegate SetCardInfoEvent;
     public static event OnPurchaseCompletedDelegate PurchaseItemEvent;
 
     // Public variables. To detect which type and sprite it is.
@@ -17,16 +16,14 @@ public class CardInfoButton : MonoBehaviour {
     //Data set when initialized
     private CardInfo cardInfo;
 
-
-
     // GameObject Components
     private Button button;
     private Text text;
     private Image buttonSprite;
 
     // Needed to check when event is triggered
-    private CreateCardInfo createCardInfo;
-    private GameManager gManager;
+    private CreateCardInfo _createCardInfo;
+    private GameManager _gameManager;
     private DataManager _dataManager;
 
     private void Awake()
@@ -34,20 +31,20 @@ public class CardInfoButton : MonoBehaviour {
         button = GetComponent<Button>();
         text = GetComponentInChildren<Text>();
         buttonSprite = GetComponent<Image>();
-        gManager = FindObjectOfType<GameManager>(); 
-        createCardInfo = FindObjectOfType<CreateCardInfo>();
+        _gameManager = FindObjectOfType<GameManager>(); 
+        _createCardInfo = FindObjectOfType<CreateCardInfo>();
         _dataManager = FindObjectOfType<DataManager>(); 
     }
 
     private void OnEnable()
     {
-        createCardInfo.PushCardInfo += SetInfo;
+        _createCardInfo.PushCardInfo += SetInfo;
         button.onClick.AddListener(SelectCard);
     }
 
     private void OnDisable()
     {
-        createCardInfo.PushCardInfo -= SetInfo;
+        _createCardInfo.PushCardInfo -= SetInfo;
         button.onClick.RemoveListener(SelectCard);
     }
     
@@ -99,7 +96,7 @@ public class CardInfoButton : MonoBehaviour {
     {
         if (cardInfo.price >= 0 && cardInfo.price <= _dataManager.Coins)
         {
-            PurchaseItemSuccesfull(cardInfo.price);
+            PurchaseItemSuccesfull();
             return true;
         }
         else
@@ -108,19 +105,12 @@ public class CardInfoButton : MonoBehaviour {
         }
     }
 
-    private void PurchaseItemSuccesfull(int cost)
+    private void PurchaseItemSuccesfull()
     {
         OnPurchaseCompletedEventArgs args = new OnPurchaseCompletedEventArgs();
-        args.Cost = cost;
+        args.Cost = cardInfo.price;
+        print(cardInfo.price);
         PurchaseItemEvent(args);
-    }
-
-    private void PushCardInfo()
-    {
-        SetCardInfoUnlockedEventArgs args = new SetCardInfoUnlockedEventArgs();
-        args.cardNumber = cardInfo.spriteNumber;
-        args.Card = cardInfo;
-        SetCardInfoEvent(args);
     }
 
 

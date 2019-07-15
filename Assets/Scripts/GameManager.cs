@@ -79,18 +79,19 @@ public class GameManager : MonoBehaviour {
 
     private void OnEnable ()
     {
+        _dataManager = FindObjectOfType<DataManager>();
         LevelSizeButton.BoardSize += SetupGame;
         SceneManager.sceneLoaded += LoadedScene;
-        AchievementButton.PayOutOnCompletedEvent += AddReward;
         CardBehaviour.CheckCard += CheckCorrectCall;
+        _dataManager.ChangeCoinTextEvent += SetCoinText;
 	}
 
     private void OnDisable()
     {
         LevelSizeButton.BoardSize -= SetupGame;
         SceneManager.sceneLoaded -= LoadedScene;
-        AchievementButton.PayOutOnCompletedEvent -= AddReward;
         CardBehaviour.CheckCard -= CheckCorrectCall;
+        _dataManager.ChangeCoinTextEvent -= SetCoinText;
     }
 
     #endregion EVENT_SUBSCRIPTION
@@ -132,10 +133,6 @@ public class GameManager : MonoBehaviour {
         {
             BuildMemoryDeck();
             GameModeSetup();
-        }
-        else
-        {
-            SetCoinText();
         }
     }
 
@@ -236,10 +233,10 @@ public class GameManager : MonoBehaviour {
         ChangeTimeLeft(args);
     }
 
-    private void SetCoinText()
+    private void SetCoinText(ChangeCoinTextEventArgs args)
     {
         _uiController = FindObjectOfType<UIController>();
-        _uiController.CoinText.text = _dataManager.Coins.ToString() + " Coins";
+        _uiController.CoinText.text = args.Coins.ToString() + " Coins";
     }
 
     #endregion SET_TEXT_FUNCTIONS
@@ -385,10 +382,6 @@ public class GameManager : MonoBehaviour {
         OnGameWonEvent(args);
     }
 
-    private void AddReward(PayOutOnCompletedEventArgs args)
-    {
-        SetCoinText();
-    }
     #endregion
 
 
