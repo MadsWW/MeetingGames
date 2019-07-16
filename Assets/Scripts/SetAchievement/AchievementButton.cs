@@ -67,8 +67,8 @@ public class AchievementButton : MonoBehaviour {
     private void SendOnCompleted()
     {
         SetAchievementOnCompletedEventArgs args = new SetAchievementOnCompletedEventArgs();
-        args.achievementNumber = AchievementNumber;
-        args.achievement = achievement;
+        args.AchievementNumber = AchievementNumber;
+        args.AnAchievement = achievement;
         SetAchievementOnCompletedEvent(args);
     }
 

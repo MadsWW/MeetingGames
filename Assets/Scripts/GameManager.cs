@@ -22,12 +22,13 @@ public class GameManager : MonoBehaviour {
     public static event LoadGameDelegate LoadGameEvent;
 
     public static event PayOutOnCompletedDelegate OnGameWonEvent;
+    public static event AchievedAmountForAchievementDelegate AmountAchievedEvent;
 
 
  
     private GameMode gameMode;
 
-    private static GameManager gManager;
+    private static GameManager _gameManager;
 
     //Will be set from menu buttons if necessairy
     private int rows = 6;
@@ -49,7 +50,6 @@ public class GameManager : MonoBehaviour {
     private DeckBuilder _deckBuilder;
     private LevelManager _levelManager;
     private UIController _uiController;
-    private AchievementInfo _achievementInfo;
     private DataManager _dataManager;
 
 
@@ -63,9 +63,9 @@ public class GameManager : MonoBehaviour {
 
     private void Singleton()
     {
-        if (gManager == null)
+        if (_gameManager == null)
         {
-            gManager = this;
+            _gameManager = this;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -80,18 +80,18 @@ public class GameManager : MonoBehaviour {
     private void OnEnable ()
     {
         _dataManager = FindObjectOfType<DataManager>();
+        _dataManager.ChangeCoinTextEvent += SetCoinText;
         LevelSizeButton.BoardSize += SetupGame;
         SceneManager.sceneLoaded += LoadedScene;
         CardBehaviour.CheckCard += CheckCorrectCall;
-        _dataManager.ChangeCoinTextEvent += SetCoinText;
 	}
 
     private void OnDisable()
     {
+        if (_dataManager) { _dataManager.ChangeCoinTextEvent -= SetCoinText; }
         LevelSizeButton.BoardSize -= SetupGame;
         SceneManager.sceneLoaded -= LoadedScene;
         CardBehaviour.CheckCard -= CheckCorrectCall;
-        _dataManager.ChangeCoinTextEvent -= SetCoinText;
     }
 
     #endregion EVENT_SUBSCRIPTION
@@ -133,6 +133,14 @@ public class GameManager : MonoBehaviour {
         {
             BuildMemoryDeck();
             GameModeSetup();
+        }
+        else
+        {
+            ChangeCoinTextEventArgs args = new ChangeCoinTextEventArgs();
+            args.Coins = _dataManager.Coins;
+            SetCoinText(args);
+
+            
         }
     }
 
@@ -235,8 +243,11 @@ public class GameManager : MonoBehaviour {
 
     private void SetCoinText(ChangeCoinTextEventArgs args)
     {
-        _uiController = FindObjectOfType<UIController>();
-        _uiController.CoinText.text = args.Coins.ToString() + " Coins";
+        if (_uiController = FindObjectOfType<UIController>())
+        {
+            _uiController = FindObjectOfType<UIController>();
+            _uiController.CoinText.text = args.Coins.ToString() + " Coins";
+        }
     }
 
     #endregion SET_TEXT_FUNCTIONS
@@ -293,25 +304,25 @@ public class GameManager : MonoBehaviour {
             switch (gameMode)
             {
                 case GameMode.Relax:
-                    _dataManager.Achievements[0].AmountAchieved++;
                     OnGameWon(10); //TODO Change to settings instead of hardcoded
+                    AmountAchievedForAchievement(0, _dataManager.Achievements[0].AmountAchieved += 1);
                     Win();
                     break;
                 case GameMode.Turns:
                     OnGameWon(25);
-                    _dataManager.Achievements[1].AmountAchieved++;
-                    _dataManager.Achievements[2].AmountAchieved = SetHighestTurnLeft();
+                    AmountAchievedForAchievement(1, _dataManager.Achievements[1].AmountAchieved += 1);
+                    AmountAchievedForAchievement(2, SetHighestTurnLeft());
                     Win();
                     break;
                 case GameMode.Time:
                     OnGameWon(25);
-                    _dataManager.Achievements[3].AmountAchieved = SetHighestTimeLeft();
+                    AmountAchievedForAchievement(3, SetHighestTimeLeft());
                     Win();
                     break;
                 case GameMode.Endless:
-                    OnGameWon(25);
-                    _dataManager.Achievements[4].AmountAchieved = SetHighestTimeSurvived();
                     timeSurvived += timeLeft;
+                    OnGameWon(25);
+                    AmountAchievedForAchievement(4, SetHighestTimeSurvived());
                     ResetBoard();
                     break;
             }
@@ -380,6 +391,14 @@ public class GameManager : MonoBehaviour {
         PayOutOnCompletedEventArgs args = new PayOutOnCompletedEventArgs();
         args.Reward = reward;
         OnGameWonEvent(args);
+    }
+
+    private void AmountAchievedForAchievement(int achievementNumber, int amountAchieved)
+    {
+        AchievedAmountForAchievementEventArgs args = new AchievedAmountForAchievementEventArgs();
+        args.AchievementNumber = achievementNumber;
+        args.AmountAchieved = amountAchieved;
+        AmountAchievedEvent(args);
     }
 
     #endregion

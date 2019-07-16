@@ -23,7 +23,6 @@ public class CardInfoButton : MonoBehaviour {
 
     // Needed to check when event is triggered
     private CreateCardInfo _createCardInfo;
-    private GameManager _gameManager;
     private DataManager _dataManager;
 
     private void Awake()
@@ -31,7 +30,6 @@ public class CardInfoButton : MonoBehaviour {
         button = GetComponent<Button>();
         text = GetComponentInChildren<Text>();
         buttonSprite = GetComponent<Image>();
-        _gameManager = FindObjectOfType<GameManager>(); 
         _createCardInfo = FindObjectOfType<CreateCardInfo>();
         _dataManager = FindObjectOfType<DataManager>(); 
     }
@@ -109,7 +107,6 @@ public class CardInfoButton : MonoBehaviour {
     {
         OnPurchaseCompletedEventArgs args = new OnPurchaseCompletedEventArgs();
         args.Cost = cardInfo.price;
-        print(cardInfo.price);
         PurchaseItemEvent(args);
     }
 

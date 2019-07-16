@@ -14,11 +14,10 @@ public  class DataManager : MonoBehaviour {
 
     public event ChangeCoinTextDelegate ChangeCoinTextEvent;
 
-    [SerializeField]private TextAsset AchievementXML;
-    [SerializeField]private TextAsset CardInfoXML;
+    private static DataManager _dataManager;
 
-    AchievementInfo _achievementInfo;
-    CreateCardInfo _createCardInfo;
+    [SerializeField] private TextAsset AchievementXML;
+    [SerializeField] private TextAsset CardInfoXML;
 
     private const string GAMEDATA_FILE_NAME = "/gamedata.xml";
     private const string CARDINFO_FILE_NAME = "/cardinfo.xml";
@@ -37,16 +36,21 @@ public  class DataManager : MonoBehaviour {
 
     #region UNITY_API
 
+    private void Awake()
+    {
+        Singleton();
+    }
+
     private void OnEnable()
     {
-        LoadGame();
-        _achievementInfo = FindObjectOfType<AchievementInfo>();
-        _createCardInfo = FindObjectOfType<CreateCardInfo>();
+
         GameManager.SaveGameEvent += SaveGame;
         GameManager.LoadGameEvent += LoadGame;
+        GameManager.AmountAchievedEvent += SetAchievementAmountAchieved;
         AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
         GameManager.OnGameWonEvent += AddReward;
         CardInfoButton.PurchaseItemEvent += PurchaseMade;
+        LoadGame();
     }
 
     private void OnDisable()
@@ -54,9 +58,23 @@ public  class DataManager : MonoBehaviour {
         SaveGame();
         GameManager.SaveGameEvent -= SaveGame;
         GameManager.LoadGameEvent -= LoadGame;
+        GameManager.AmountAchievedEvent -= SetAchievementAmountAchieved;
         AchievementButton.SetAchievementOnCompletedEvent -= OnAchievementCompleted;
         GameManager.OnGameWonEvent -= AddReward;
         CardInfoButton.PurchaseItemEvent -= PurchaseMade;
+    }
+
+    private void Singleton()
+    {
+        if (_dataManager == null)
+        {
+            _dataManager = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     #endregion //UNITY_API
@@ -99,7 +117,7 @@ public  class DataManager : MonoBehaviour {
 
     private void OnAchievementCompleted(SetAchievementOnCompletedEventArgs e)
     {
-        _achievements[e.achievementNumber] = e.achievement;
+        _achievements[e.AchievementNumber] = e.AnAchievement;
     }
 
     private void AddReward(PayOutOnCompletedEventArgs args)
@@ -119,6 +137,12 @@ public  class DataManager : MonoBehaviour {
         ChangeCoinTextEventArgs args = new ChangeCoinTextEventArgs();
         args.Coins = _coins;
         ChangeCoinTextEvent(args);
+    }
+
+    private void SetAchievementAmountAchieved( AchievedAmountForAchievementEventArgs args)
+    {
+        print(args.AmountAchieved);
+        _achievements[args.AchievementNumber].AmountAchieved = args.AmountAchieved;
     }
 
     #endregion //EVENT_FUNCTIONS

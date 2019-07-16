@@ -49,8 +49,14 @@ public class PushCardBackInfoEventArgs : EventArgs
 
 public class SetAchievementOnCompletedEventArgs : EventArgs
 {
-    public int achievementNumber { get; set; }
-    public Achievement achievement { get; set; }
+    public int AchievementNumber { get; set; }
+    public Achievement AnAchievement { get; set; }
+}
+
+public class AchievedAmountForAchievementEventArgs : EventArgs
+{
+    public int AchievementNumber { get; set; }
+    public int AmountAchieved { get; set; }
 }
 
 public class PayOutOnCompletedEventArgs : EventArgs
@@ -63,10 +69,6 @@ public class OnPurchaseCompletedEventArgs : EventArgs
     public int Cost { get; set; }
 }
 
-public class CreateAchievementEventArgs : EventArgs
-{
-    public Achievement achievement { get; set; }
-}
 
 
 
