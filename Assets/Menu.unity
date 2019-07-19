@@ -2470,12 +2470,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fc7706cfd0bac046bd10778d1b9e072, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AchievementSprites:
-  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &912302042
 GameObject:
   m_ObjectHideFlags: 0
