@@ -178,7 +178,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 416346996}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 274.8, y: 676.7361, z: 0}
+  m_LocalPosition: {x: 274.8, y: 676.99524, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1578098179}
@@ -429,8 +429,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1578098175}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 171, y: 304, z: 0}
-  m_LocalScale: {x: 0.4275, y: 0.4275, z: 0.4275}
+  m_LocalPosition: {x: 171.5, y: 305, z: 0}
+  m_LocalScale: {x: 0.42875, y: 0.42875, z: 0.42875}
   m_Children:
   - {fileID: 416346997}
   - {fileID: 2061320913}
@@ -482,6 +482,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114484845333351422, guid: 377b2f48f523d3c4a9c7939f862b3e61,
+        type: 2}
+      propertyPath: size
+      value: 0.3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 377b2f48f523d3c4a9c7939f862b3e61, type: 2}
   m_IsPrefabParent: 0
@@ -509,7 +514,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1776902104}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -274.8, y: 676.7361, z: 0}
+  m_LocalPosition: {x: -274.8, y: 676.99524, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1578098179}
@@ -583,7 +588,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2061320912}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.000015258789, y: 676.6861, z: 0}
+  m_LocalPosition: {x: 0.000015258789, y: 676.94525, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1578098179}
@@ -685,7 +690,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 6
+  orthographic size: 1.2
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -707,7 +712,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2105817470}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.23, y: -2.63, z: -10}
+  m_LocalPosition: {x: 0.448, y: -0.655, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

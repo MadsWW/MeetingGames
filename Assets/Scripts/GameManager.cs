@@ -84,6 +84,7 @@ public class GameManager : MonoBehaviour {
         LevelSizeButton.BoardSize += SetupGame;
         SceneManager.sceneLoaded += LoadedScene;
         CardBehaviour.CheckCard += CheckCorrectCall;
+        LoadGameEvent();
 	}
 
     private void OnDisable()
@@ -92,6 +93,7 @@ public class GameManager : MonoBehaviour {
         LevelSizeButton.BoardSize -= SetupGame;
         SceneManager.sceneLoaded -= LoadedScene;
         CardBehaviour.CheckCard -= CheckCorrectCall;
+        SaveGameEvent();
     }
 
     #endregion EVENT_SUBSCRIPTION

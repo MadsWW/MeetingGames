@@ -50,12 +50,12 @@ public  class DataManager : MonoBehaviour {
         AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
         GameManager.OnGameWonEvent += AddReward;
         CardInfoButton.PurchaseItemEvent += PurchaseMade;
-        LoadGame();
+        //LoadGame();
     }
 
     private void OnDisable()
     {
-        SaveGame();
+        //SaveGame();
         GameManager.SaveGameEvent -= SaveGame;
         GameManager.LoadGameEvent -= LoadGame;
         GameManager.AmountAchievedEvent -= SetAchievementAmountAchieved;
