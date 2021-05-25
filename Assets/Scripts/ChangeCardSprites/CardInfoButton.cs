@@ -9,10 +9,6 @@ public class CardInfoButton : MonoBehaviour {
 
     public static event OnPurchaseCompletedDelegate PurchaseItemEvent;
 
-    // Public variables. To detect which type and sprite it is.
-    public int cardSpriteNumber;
-    public CardType cardType;
-
     //Data set when initialized
     private CardInfo cardInfo;
 
@@ -22,7 +18,6 @@ public class CardInfoButton : MonoBehaviour {
     private Image buttonSprite;
 
     // Needed to check when event is triggered
-    private CreateCardInfo _createCardInfo;
     private DataManager _dataManager;
 
     private void Awake()
@@ -30,43 +25,32 @@ public class CardInfoButton : MonoBehaviour {
         button = GetComponent<Button>();
         text = GetComponentInChildren<Text>();
         buttonSprite = GetComponent<Image>();
-        _createCardInfo = FindObjectOfType<CreateCardInfo>();
         _dataManager = FindObjectOfType<DataManager>(); 
     }
 
     private void OnEnable()
     {
-        _createCardInfo.PushCardInfo += SetInfo;
         button.onClick.AddListener(SelectCard);
     }
 
     private void OnDisable()
     {
-        _createCardInfo.PushCardInfo -= SetInfo;
         button.onClick.RemoveListener(SelectCard);
     }
     
     //When PushCardBackInfoEvent is triggered
-    private void SetInfo(PushCardBackInfoEventArgs e)
+    public void SetInfo(CardInfo card, Sprite sprite)
     {
-        if (cardSpriteNumber == e.Card.spriteNumber && cardType == e.Card.typeOfCard)
-        {
-            cardInfo = e.Card;
-            buttonSprite.sprite = e.CardSprite;
-            CheckUnlocked();
-        }
+        cardInfo = card;
+        buttonSprite.sprite = sprite;
+        CheckUnlocked();
     }
 
     private void CheckUnlocked()
     {
-        if (cardInfo.isUnlocked)
-        {
-            text.text = string.Empty;
-        }
-        else
-        {
-            text.text = "Cost: " + cardInfo.price.ToString(); 
-        }
+        text.text = string.Empty;
+        if (cardInfo.isUnlocked) return;
+        text.text = "Cost: " + cardInfo.price.ToString(); 
     }
 
     //Buy item if not unlocked else select it as cardback/front when clicked on.

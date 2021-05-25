@@ -1,37 +1,39 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CreateCardInfo : MonoBehaviour {
 
-    public event PushCardBackInfoDelegate PushCardInfo;
-
     private DataManager _dataManager;
 
-    public Sprite[] cardBacksSprite;
-    public Sprite[] cardFrontSprite;
+    [SerializeField] private GameObject _cardInfoButtonPrefab;
+
+    [SerializeField] private GameObject _cardFrontParent;
+    [SerializeField] private GameObject _cardBackParent;
+
+    [SerializeField] private Sprite[] _cardFrontSprite;
+    [SerializeField] private Sprite[] _cardBacksSprite;
+
 
     private void Awake()
     {
         _dataManager = FindObjectOfType<DataManager>();
     }
 
-    // !!! Sends CardInfo * CardInfo (10 x 10 = 100) amount of events, can done be better?? More custom events?
-    public void SendCardInfo()
+    private void SendCardInfo()
     {
         for( int i = 0; i < _dataManager.CardBackInfo.Count; i++)
         {
-            PushCardBackInfoEventArgs args = new PushCardBackInfoEventArgs();
-            args.Card = _dataManager.CardBackInfo[i];
-            args.CardSprite = cardBacksSprite[i];
-            PushCardInfo(args);
+            GameObject go = Instantiate(_cardInfoButtonPrefab, _cardBackParent.transform);
+            CardInfoButton cib = go.GetComponent<CardInfoButton>();
+            cib.SetInfo(_dataManager.CardBackInfo[i], _cardBacksSprite[i]);
         }
 
         for (int i = 0; i < _dataManager.CardFrontInfo.Count; i++)
         {
-            PushCardBackInfoEventArgs args = new PushCardBackInfoEventArgs();
-            args.Card = _dataManager.CardFrontInfo[i];
-            args.CardSprite = cardFrontSprite[i];
-            PushCardInfo(args);
+            GameObject go = Instantiate(_cardInfoButtonPrefab, _cardFrontParent.transform);
+            CardInfoButton cib = go.GetComponent<CardInfoButton>();
+            cib.SetInfo(_dataManager.CardFrontInfo[i], _cardFrontSprite[i]);
         }
     }
 }

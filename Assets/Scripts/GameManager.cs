@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour {
         LevelSizeButton.BoardSize += SetupGame;
         SceneManager.sceneLoaded += LoadedScene;
         CardBehaviour.CheckCard += CheckCorrectCall;
-        LoadGameEvent();
+        if(LoadGameEvent != null) LoadGameEvent();
 	}
 
     private void OnDisable()
@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour {
         LevelSizeButton.BoardSize -= SetupGame;
         SceneManager.sceneLoaded -= LoadedScene;
         CardBehaviour.CheckCard -= CheckCorrectCall;
-        SaveGameEvent();
+        if(SaveGameEvent != null) SaveGameEvent();
     }
 
     #endregion EVENT_SUBSCRIPTION
@@ -245,7 +245,7 @@ public class GameManager : MonoBehaviour {
 
     private void SetCoinText(ChangeCoinTextEventArgs args)
     {
-        if (_uiController = FindObjectOfType<UIController>())
+        if (FindObjectOfType<UIController>())
         {
             _uiController = FindObjectOfType<UIController>();
             _uiController.CoinText.text = args.Coins.ToString() + " Coins";

@@ -141,7 +141,6 @@ public  class DataManager : MonoBehaviour {
 
     private void SetAchievementAmountAchieved( AchievedAmountForAchievementEventArgs args)
     {
-        print(args.AmountAchieved);
         _achievements[args.AchievementNumber].AmountAchieved = args.AmountAchieved;
     }
 
@@ -164,7 +163,7 @@ public  class DataManager : MonoBehaviour {
         XmlSerializer serializer = new XmlSerializer(typeof(AchievementContainer));
         AchievementContainer data;
 
-        if (File.Exists(Application.persistentDataPath + fileName))
+        if (!File.Exists(Application.persistentDataPath + fileName))
         {
             FileStream filestream = File.Open(Application.persistentDataPath + fileName, FileMode.Open);
             data = serializer.Deserialize(filestream) as AchievementContainer;
@@ -185,7 +184,7 @@ public  class DataManager : MonoBehaviour {
         XmlSerializer serializer = new XmlSerializer(typeof(CardInfoContainer));
         CardInfoContainer data;
 
-        if (File.Exists(Application.persistentDataPath + fileName))
+        if (!File.Exists(Application.persistentDataPath + fileName))
         {
             FileStream filestream = File.Open(Application.persistentDataPath + fileName, FileMode.Open);
             data = serializer.Deserialize(filestream) as CardInfoContainer;
