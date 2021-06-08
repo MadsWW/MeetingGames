@@ -8,9 +8,10 @@ public enum CardType { CardFront, CardBack }
 public class CardInfoButton : MonoBehaviour {
 
     public static event OnPurchaseCompletedDelegate PurchaseItemEvent;
-
+    public static event OnUpdatedCardInfoDelegate UpdateCardInfoEvent;
     //Data set when initialized
     private CardInfo cardInfo;
+    public CardInfo CardInfo { get { return cardInfo; }}
 
     // GameObject Components
     private Button button;
@@ -19,13 +20,15 @@ public class CardInfoButton : MonoBehaviour {
 
     // Needed to check when event is triggered
     private DataManager _dataManager;
+    private GameManager _gameManager;
 
     private void Awake()
     {
         button = GetComponent<Button>();
         text = GetComponentInChildren<Text>();
         buttonSprite = GetComponent<Image>();
-        _dataManager = FindObjectOfType<DataManager>(); 
+        _dataManager = FindObjectOfType<DataManager>();
+        _gameManager = FindObjectOfType<GameManager>();
     }
 
     private void OnEnable()
@@ -61,6 +64,9 @@ public class CardInfoButton : MonoBehaviour {
             //Set data to CreateCardInfo so bool IsUnlocked can be saved when bought.
             if (CheckEnoughCoins())
             {
+                SendUpdatedCardInfoEventArgs e = new SendUpdatedCardInfoEventArgs();
+                e.CardInfo = cardInfo;
+                UpdateCardInfoEvent(e);
                 cardInfo.isUnlocked = true;
                 text.text = string.Empty;
             }

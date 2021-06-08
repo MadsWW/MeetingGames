@@ -12,10 +12,9 @@ public delegate void SetAchievementDataDelegate( SetAchievementDataEventArgs e);
 public delegate void SetAchievementOnCompletedDelegate(SetAchievementOnCompletedEventArgs e);
 public delegate void AchievedAmountForAchievementDelegate(AchievedAmountForAchievementEventArgs e);
 
-public delegate void PushCardBackInfoDelegate(PushCardBackInfoEventArgs e);
-
 public delegate void PayOutOnCompletedDelegate(PayOutOnCompletedEventArgs e);
 public delegate void OnPurchaseCompletedDelegate(OnPurchaseCompletedEventArgs e);
+public delegate void OnUpdatedCardInfoDelegate(SendUpdatedCardInfoEventArgs e);
 
 public delegate void SaveGameDelegate();
 public delegate void LoadGameDelegate();

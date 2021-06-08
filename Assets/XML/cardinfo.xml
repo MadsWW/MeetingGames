@@ -3,8 +3,8 @@
   <CardBackInfos>
     <CardBackInfo>
       <spriteNumber>0</spriteNumber>
-      <price>100</price>
-      <isUnlocked>false</isUnlocked>
+      <price>0</price>
+      <isUnlocked>true</isUnlocked>
       <typeOfCard>CardBack</typeOfCard>
     </CardBackInfo>
     <CardBackInfo>
@@ -31,12 +31,30 @@
       <isUnlocked>false</isUnlocked>
       <typeOfCard>CardBack</typeOfCard>
     </CardBackInfo>
+    <CardBackInfo>
+      <spriteNumber>5</spriteNumber>
+      <price>1500</price>
+      <isUnlocked>false</isUnlocked>
+      <typeOfCard>CardFront</typeOfCard>
+    </CardBackInfo>
+    <CardBackInfo>
+      <spriteNumber>6</spriteNumber>
+      <price>2000</price>
+      <isUnlocked>false</isUnlocked>
+      <typeOfCard>CardFront</typeOfCard>
+    </CardBackInfo>
+    <CardBackInfo>
+      <spriteNumber>7</spriteNumber>
+      <price>2500</price>
+      <isUnlocked>false</isUnlocked>
+      <typeOfCard>CardFront</typeOfCard>
+    </CardBackInfo>
   </CardBackInfos>
   <CardFrontInfo>
     <CardInfo>
       <spriteNumber>0</spriteNumber>
-      <price>100</price>
-      <isUnlocked>false</isUnlocked>
+      <price>0</price>
+      <isUnlocked>true</isUnlocked>
       <typeOfCard>CardFront</typeOfCard>
     </CardInfo>
     <CardInfo>
@@ -53,7 +71,7 @@
     </CardInfo>
     <CardInfo>
       <spriteNumber>3</spriteNumber>
-      <price>400</price>
+      <price>500</price>
       <isUnlocked>false</isUnlocked>
       <typeOfCard>CardFront</typeOfCard>
     </CardInfo>

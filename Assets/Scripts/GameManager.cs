@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour {
     private void OnEnable ()
     {
         _dataManager = FindObjectOfType<DataManager>();
-        _dataManager.ChangeCoinTextEvent += SetCoinText;
+        if (_dataManager) _dataManager.ChangeCoinTextEvent += SetCoinText;
         LevelSizeButton.BoardSize += SetupGame;
         SceneManager.sceneLoaded += LoadedScene;
         CardBehaviour.CheckCard += CheckCorrectCall;

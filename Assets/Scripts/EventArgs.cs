@@ -41,12 +41,6 @@ public class SetAchievementDataEventArgs: EventArgs
     public Achievement AnAchievement { get; set; }
 }
 
-public class PushCardBackInfoEventArgs : EventArgs
-{
-    public Sprite CardSprite { get; set; }
-    public CardInfo Card { get; set; }
-}
-
 public class SetAchievementOnCompletedEventArgs : EventArgs
 {
     public int AchievementNumber { get; set; }
@@ -67,6 +61,11 @@ public class PayOutOnCompletedEventArgs : EventArgs
 public class OnPurchaseCompletedEventArgs : EventArgs
 {
     public int Cost { get; set; }
+}
+
+public class SendUpdatedCardInfoEventArgs : EventArgs
+{
+    public CardInfo CardInfo { get; set; }
 }
 
 

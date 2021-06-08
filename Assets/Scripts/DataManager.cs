@@ -50,6 +50,7 @@ public  class DataManager : MonoBehaviour {
         AchievementButton.SetAchievementOnCompletedEvent += OnAchievementCompleted;
         GameManager.OnGameWonEvent += AddReward;
         CardInfoButton.PurchaseItemEvent += PurchaseMade;
+        CardInfoButton.UpdateCardInfoEvent += UpdateCardInfo;
         //LoadGame();
     }
 
@@ -62,6 +63,7 @@ public  class DataManager : MonoBehaviour {
         AchievementButton.SetAchievementOnCompletedEvent -= OnAchievementCompleted;
         GameManager.OnGameWonEvent -= AddReward;
         CardInfoButton.PurchaseItemEvent -= PurchaseMade;
+        CardInfoButton.UpdateCardInfoEvent -= UpdateCardInfo;
     }
 
     private void Singleton()
@@ -144,6 +146,18 @@ public  class DataManager : MonoBehaviour {
         _achievements[args.AchievementNumber].AmountAchieved = args.AmountAchieved;
     }
 
+    private void UpdateCardInfo(SendUpdatedCardInfoEventArgs args)
+    {
+        if(args.CardInfo.typeOfCard == CardType.CardFront)
+        {
+            _cardFrontInfo[args.CardInfo.spriteNumber] = args.CardInfo;
+        }
+        else
+        {
+            _cardBackInfo[args.CardInfo.spriteNumber] = args.CardInfo;
+        }
+    }
+
     #endregion //EVENT_FUNCTIONS
 
     #region SAVE_LOAD_XML_FUNCTIONS
@@ -163,7 +177,7 @@ public  class DataManager : MonoBehaviour {
         XmlSerializer serializer = new XmlSerializer(typeof(AchievementContainer));
         AchievementContainer data;
 
-        if (!File.Exists(Application.persistentDataPath + fileName))
+        if (File.Exists(Application.persistentDataPath + fileName))
         {
             FileStream filestream = File.Open(Application.persistentDataPath + fileName, FileMode.Open);
             data = serializer.Deserialize(filestream) as AchievementContainer;
@@ -184,7 +198,7 @@ public  class DataManager : MonoBehaviour {
         XmlSerializer serializer = new XmlSerializer(typeof(CardInfoContainer));
         CardInfoContainer data;
 
-        if (!File.Exists(Application.persistentDataPath + fileName))
+        if (File.Exists(Application.persistentDataPath + fileName))
         {
             FileStream filestream = File.Open(Application.persistentDataPath + fileName, FileMode.Open);
             data = serializer.Deserialize(filestream) as CardInfoContainer;

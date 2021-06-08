@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CreateCardInfo : MonoBehaviour {
 
@@ -18,9 +16,10 @@ public class CreateCardInfo : MonoBehaviour {
     private void Awake()
     {
         _dataManager = FindObjectOfType<DataManager>();
+        InstantiateCards();
     }
 
-    private void SendCardInfo()
+    private void InstantiateCards()
     {
         for( int i = 0; i < _dataManager.CardBackInfo.Count; i++)
         {
