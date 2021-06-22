@@ -7,13 +7,13 @@ public class AchievementButton : MonoBehaviour {
     public static event PayOutOnCompletedDelegate PayOutOnCompletedEvent;
 
     //private go variable
-    private Achievement achievement;
+    private Achievement _achievement;
 
     //public go variable
-    public int AchievementNumber;
+    private int _achievementNumber;
 
     //GameObject Needed for event trigger.
-    private AchievementInfo aInfo;
+    private AchievementInfo _achievementInfo;
 
 
 
@@ -23,37 +23,30 @@ public class AchievementButton : MonoBehaviour {
 
     private void OnEnable()
     {
-        aInfo = FindObjectOfType<AchievementInfo>();
+        _achievementInfo = FindObjectOfType<AchievementInfo>();
         text = GetComponentInChildren<Text>();
-        //image = GetComponentInChildren<Image>();
-        aInfo.SetAchievementDataEvent += SetAchievement;
     }
 
-    private void OnDisable()
+    public void SetInfo(Achievement achievement)
     {
-        aInfo.SetAchievementDataEvent -= SetAchievement;
+        _achievement = achievement;
+        SetAchievementText();
+        CheckForCompleted();
     }
 
-    //Gets send an achievements and set this variable achievement
-    private void SetAchievement(SetAchievementDataEventArgs e)
+    private void SetAchievementText()
     {
-        if (AchievementNumber == e.AchievementNumber)
-        {
-            achievement = e.AnAchievement;
-            SetAchievementText();
-            CheckForCompleted();
-        }
+        text.text = string.Format("{0}\nProgress: {1} / {2}", _achievement.Message, _achievement.AmountAchieved, _achievement.AmountToAchieve);
     }
 
-    //Checks if the achievement is completed by checking if value achieved is equal or higher to value needed to complete
     private void CheckForCompleted()
     {
-        if (achievement.AmountAchieved >= achievement.AmountToAchieve)
+        if (_achievement.AmountAchieved >= _achievement.AmountToAchieve)
         {
-            if (!achievement.IsUnlocked)
+            if (!_achievement.IsUnlocked)
             {
-                achievement.IsUnlocked = true;
-                achievement.Message = "Completed!";
+                _achievement.IsUnlocked = true;
+                _achievement.Message = "Completed!";
                 SendOnCompleted();
                 PayOut();
             }
@@ -67,21 +60,15 @@ public class AchievementButton : MonoBehaviour {
     private void SendOnCompleted()
     {
         SetAchievementOnCompletedEventArgs args = new SetAchievementOnCompletedEventArgs();
-        args.AchievementNumber = AchievementNumber;
-        args.AnAchievement = achievement;
+        args.AchievementNumber = _achievementNumber;
+        args.AnAchievement = _achievement;
         SetAchievementOnCompletedEvent(args);
     }
 
     private void PayOut()
     {
         PayOutOnCompletedEventArgs args = new PayOutOnCompletedEventArgs();
-        args.Reward = achievement.CashReward;
+        args.Reward = _achievement.CashReward;
         PayOutOnCompletedEvent(args);
-    }
-
-    //Sets text element from gamobject
-    private void SetAchievementText()
-    {
-        text.text = string.Format("{0}\nProgress: {1} / {2}", achievement.Message, achievement.AmountAchieved, achievement.AmountToAchieve);
     }
 }

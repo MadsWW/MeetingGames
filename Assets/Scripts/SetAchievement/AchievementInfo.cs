@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-public  class AchievementInfo : MonoBehaviour
+public class AchievementInfo : MonoBehaviour
 {
-    public event SetAchievementDataDelegate SetAchievementDataEvent;
+    [SerializeField] private GameObject _achievementPrefab;
+    [SerializeField] private GameObject _achievementParent;
 
     private DataManager _dataManager;
 
@@ -10,27 +12,16 @@ public  class AchievementInfo : MonoBehaviour
     private void Awake()
     {
         _dataManager = FindObjectOfType<DataManager>();
+        InstantiateAchievements();
     }
 
-    //Pushes data to AchievementButton.
-    #region SET_ACHIEVEMENT_EVENT_FUNCTIONS
-
-    public void SetAchievements()
+    private void InstantiateAchievements()
     {
-        for(int i = 0; i < _dataManager.Achievements.Count; i++)
+        foreach (Achievement achievement in _dataManager.Achievements)
         {
-            CheckAchievement(i, _dataManager.Achievements[i]);
+            GameObject go = Instantiate(_achievementPrefab, _achievementParent.transform);
+            AchievementButton ab = go.GetComponent<AchievementButton>();
+            ab.SetInfo(achievement);
         }
     }
-
-    private void CheckAchievement(int achievementNumber, Achievement achievement)
-    {
-        SetAchievementDataEventArgs args = new SetAchievementDataEventArgs();
-        args.AchievementNumber = achievementNumber;
-        args.AnAchievement = achievement;
-
-        SetAchievementDataEvent(args);
-    }
-
-    #endregion SET_ACHIEVEMENT_EVENT_FUNCTIONS
 }
