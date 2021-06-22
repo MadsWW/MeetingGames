@@ -6,24 +6,12 @@ public class AchievementButton : MonoBehaviour {
     public static event SetAchievementOnCompletedDelegate SetAchievementOnCompletedEvent;
     public static event PayOutOnCompletedDelegate PayOutOnCompletedEvent;
 
-    //private go variable
     private Achievement _achievement;
-
-    //public go variable
     private int _achievementNumber;
-
-    //GameObject Needed for event trigger.
-    private AchievementInfo _achievementInfo;
-
-
-
-    //GamObject Child Components
     private Text text;
-    //private Image image;
 
     private void OnEnable()
     {
-        _achievementInfo = FindObjectOfType<AchievementInfo>();
         text = GetComponentInChildren<Text>();
     }
 
